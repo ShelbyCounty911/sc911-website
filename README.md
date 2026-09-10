@@ -37,7 +37,7 @@ Workers Builds is the publish path for this repository:
 
 - Pushes to `main` run the deploy command: `npx wrangler deploy` (also available locally as `npm run deploy`).
 - Non-main / pull-request branches use the version command: `npx wrangler versions upload` (also available locally as `npm run preview`).
-- With `preview_urls` set to `true` in `wrangler.jsonc`, version uploads produce versioned preview URLs for PR review.
+- With `preview_urls` set to `true` in `wrangler.jsonc`, version uploads produce versioned preview URLs for PR review. Worker-level Preview URLs routing follows that Wrangler setting on the next `npx wrangler deploy` to `main` (versions upload alone does not replace the active production deployment).
 - Cloudflare posts pull-request comments with preview URLs when those URLs are available.
 - PR preview versions must not replace the active `main` deployment on the review URL above.
 
