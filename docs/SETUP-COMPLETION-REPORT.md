@@ -1,10 +1,25 @@
 # Setup completion report — ShelbyCounty911/sc911-website
 
-**Generated:** 2026-09-10 (inspection session)  
-**Main tip inspected:** `4b4e283edfb50545289419233d06d86443fa88b4`  
-**Method:** Live GitHub API / Actions / rulesets / classic branch protection; Cloudflare Worker inventory via API + Wrangler deployments/versions; live HTTP checks of the workers.dev review host. Dashboard Builds connection settings were evidenced by owner screenshots after reconnect (`?new-connection=true`). Workers Builds trigger list API returned HTTP 403 with the available Wrangler OAuth token (Builds endpoints not readable that way).
+**Updated:** 2026-09-10 (corrections for previews, approvals, and pending work)  
+**Main tip at first Git deploy:** `4b4e283edfb50545289419233d06d86443fa88b4`  
+**Method:** Live GitHub API / Actions / rulesets / classic branch protection; Cloudflare Worker inventory; live HTTP checks of the workers.dev review host and attempted versioned preview hosts. Dashboard Builds connection settings were evidenced by owner screenshots after reconnect (`?new-connection=true`). Workers Builds trigger list API returned HTTP 403 with the available Wrangler OAuth token (Builds endpoints not readable that way).
 
-This report distinguishes **verified in this inspection** from **configured but not demonstrated**. It is not an accessibility acceptance review.
+This report distinguishes **verified**, **approved decisions**, **in progress (PR #4)**, and **pending demonstration**. It is not an accessibility acceptance review. It does **not** claim that setup is finished with nothing remaining.
+
+---
+
+## Approved decisions (owner)
+
+| Decision | Status |
+|----------|--------|
+| Worker rename to **`sc911-website`** (from `sc911-team-review`) | **Approved** — live target |
+| Review URL `https://sc911-website.shelby-county-911-district.workers.dev/index.html` | **Approved** — active review host |
+| `required_approving_review_count: 0` on Protect main + classic protection | **Intentional** — GitHub does **not** enforce human Approve as a merge gate |
+| PR preview URLs for non-`main` / PR branches | **Required** project policy (implementation in progress via [PR #4](https://github.com/ShelbyCounty911/sc911-website/pull/4)) |
+
+**Project policy (outside GitHub’s merge gate):** Consequential changes still require **recorded owner approval**, even though GitHub does not require a human Approve click to merge.
+
+Historical Worker / version IDs from before the rename remain valid as history. The **active** target name is always **`sc911-website`**.
 
 ---
 
@@ -29,17 +44,17 @@ This report distinguishes **verified in this inspection** from **configured but 
 | English/Spanish pairs | Root HTML: `index.html` ↔ `es-index.html`, `foo.html` ↔ `es-foo.html`. Allowed unpaired: `review.html` only. Nested HTML not pair-checked. |
 | Preview noindex | Every HTML needs robots meta containing `noindex`; `public/robots.txt` must contain `Disallow: /`; `public/_headers` must contain `X-Robots-Tag` and `noindex`. |
 
-### Latest PR, SHAs, workflow runs, command output
+### Evidence from CI setup (PR #2)
 
 | Item | Value |
 |------|-------|
-| CI setup PR | https://github.com/ShelbyCounty911/sc911-website/pull/2 (MERGED 2026-09-10T17:29:34Z) |
+| CI setup PR | https://github.com/ShelbyCounty911/sc911-website/pull/2 (MERGED) |
 | Merge commit | `4b4e283edfb50545289419233d06d86443fa88b4` |
 | PR head before merge | `a4b0050d3aa4a6b102e7eb1e7d27faf62bb72078` |
 | Actions run (PR) | https://github.com/ShelbyCounty911/sc911-website/actions/runs/34505135401 — `pull_request` — **success** |
 | Actions run (push/main) | https://github.com/ShelbyCounty911/sc911-website/actions/runs/34508541611 — `push` — **success** |
 
-Local command on current `main` checkout:
+Local `node scripts/check-site.mjs` on that `main` tip:
 
 ```text
 Checking 73 HTML file(s) under public/…
@@ -51,11 +66,10 @@ PASS: Preview indexing: public/_headers contains X-Robots-Tag and noindex
 Result: PASS
 ```
 
-### Skipped checks / non-blocking failures
+### What GitHub Actions does **not** do
 
-- No other GitHub Actions workflows exist (no a11y, visual, or deploy workflows).
-- Ruleset/classic protection require **only** `validate-site`. Cloudflare’s `Workers Builds: sc911-website` check is **not** a required status check for merging.
-- `required_approving_review_count` is **0** (PR still required; human Approve not required). Self-approval had been a blocker earlier; approval count was lowered so owners can merge their own PRs while still requiring the PR + check.
+- No deploy, Wrangler, or Cloudflare publish steps.
+- Publishing the active review Worker is **Cloudflare Workers Builds on `main`** (`npx wrangler deploy`), not Actions.
 
 ---
 
@@ -70,27 +84,36 @@ Result: PASS
 | enforcement | `active` |
 | target | `refs/heads/main` |
 | UI | https://github.com/ShelbyCounty911/sc911-website/rules/22798472 |
-| Required status checks | **`validate-site`**, `strict_required_status_checks_policy: true` |
-| Pull request rule | present; **`required_approving_review_count: 0`** |
+| Required status checks | **`validate-site`**, **`Workers Builds: sc911-website`**, `strict_required_status_checks_policy: true` |
+| Pull request rule | present; **`required_approving_review_count: 0`** (intentional) |
 | Force-push | blocked (`non_fast_forward`) |
 | Deletion | blocked (`deletion`) |
 | bypass_actors | `[]` (`current_user_can_bypass: never` on inspection principal) |
+
+Ruleset was updated when preview / Builds gating work landed (API `updated_at` 2026-09-10T18:35:22Z). After [PR #4](https://github.com/ShelbyCounty911/sc911-website/pull/4) merges (or with the current ruleset update already applied), both checks remain the merge gate.
 
 ### Classic branch protection (API, HTTP 200)
 
 | Field | Value |
 |-------|-------|
-| Required checks | `validate-site`, `strict: true` |
-| Required PR reviews object | present; approving count **0** |
+| Required checks | `validate-site`, `Workers Builds: sc911-website`, `strict: true` |
+| Required PR reviews object | present; approving count **0** (intentional) |
 | `allow_force_pushes` | false |
 | `allow_deletions` | false |
 | `enforce_admins` | **true** |
 
-**Verified:** Pull requests are required to update `main`, and **`validate-site` must pass** (strict). Admin enforce is on for classic protection; ruleset shows no bypass actors for the inspecting token.
+### What gates merging vs publishing
+
+| Gate | Fact |
+|------|------|
+| Merging to `main` | Gated by **`validate-site`** and **`Workers Builds: sc911-website`** (required + strict), plus PR requirement |
+| Human Approve on GitHub | **Not** enforced (`required_approving_review_count: 0`); recorded owner approval remains project policy |
+| Publishing active review Worker | Cloudflare Workers Builds on **`main`** (`wrangler deploy`) — not gated by inventing a separate “main-only” check beyond what already runs on the PR |
+| GitHub Actions | Validation only; does not publish |
 
 ---
 
-## 3. Cloudflare Git integration
+## 3. Cloudflare Git integration and publish paths
 
 ### Connection (dashboard evidence + GitHub check evidence)
 
@@ -99,7 +122,7 @@ Owner dashboard after reconnect showed Git repository **`ShelbyCounty911/sc911-w
 | Setting | Value (dashboard) |
 |---------|-------------------|
 | Account | Shelby County 911 District (`fd14180882e36accc0cf6a3c42d3c391`) |
-| Worker | **`sc911-website`** (renamed from `sc911-team-review`; same script tag `6c73cbbc730a4521848b467489862b4a`) |
+| Worker | **`sc911-website`** (owner-approved rename from `sc911-team-review`; same script tag `6c73cbbc730a4521848b467489862b4a`) |
 | Connected repository | `ShelbyCounty911/sc911-website` |
 | Production branch | `main` |
 | Root directory | `/` |
@@ -108,14 +131,17 @@ Owner dashboard after reconnect showed Git repository **`ShelbyCounty911/sc911-w
 | Version command | `npx wrangler versions upload` |
 | Builds for non-production branches | enabled (checkbox) |
 
-Workers Builds REST (`/builds/triggers`, `/builds/repos/connections`) returned **403** with Wrangler OAuth in this environment — connection details above are from dashboard screenshots + successful GitHub check-run metadata, not from listing triggers via API.
+Workers Builds REST (`/builds/triggers`, `/builds/repos/connections`) returned **403** with Wrangler OAuth in this environment — connection details above are from dashboard screenshots + successful GitHub check-run metadata.
 
-### Target Worker name — important correction
+### Three distinct publish / upload paths
 
-**The live target is `sc911-website`, not `sc911-team-review`.**  
-Evidence: Cloudflare Workers list shows `sc911-website` only (no `sc911-team-review`); `wrangler.jsonc` on `main` has `"name": "sc911-website"`; old host `https://sc911-team-review.shelby-county-911-district.workers.dev/index.html` returns **404**; new host returns **200**.
+| Path | Command | Role |
+|------|---------|------|
+| **Main auto-deploy** | `npx wrangler deploy` (Workers Builds on `main`) | Updates the **active** review Worker / workers.dev production version |
+| **PR preview** | `npx wrangler versions upload` (Workers Builds on non-`main` / PR branches) | Uploads a **versioned** preview; must **not** replace the active `main` deployment |
+| **Manual Wrangler** | Local `npm run deploy` / `npx wrangler deploy` (or `npm run preview` / versions upload) | Optional CLI path; distinct from Git-triggered Builds |
 
-### Successful Git-triggered deployment (distinct from manual Wrangler)
+### First successful Git-triggered main deploy (history + active target)
 
 | Field | Value |
 |-------|-------|
@@ -124,96 +150,98 @@ Evidence: Cloudflare Workers list shows `sc911-website` only (no `sc911-team-rev
 | Check run | https://github.com/ShelbyCounty911/sc911-website/runs/102976838697 |
 | Cloudflare Build ID | `7e1f8cde-0775-4b60-a9dc-3c4fcb119a8d` |
 | Dashboard build URL | https://dash.cloudflare.com/fd14180882e36accc0cf6a3c42d3c391/workers/services/view/sc911-website/production/builds/7e1f8cde-0775-4b60-a9dc-3c4fcb119a8d |
-| Worker Version ID | `860655b2-d9ac-49c6-84e5-aead2eef2306` (created 2026-09-10T17:30:11Z; also listed by `wrangler deployments list --name sc911-website`) |
-| Review URL | https://sc911-website.shelby-county-911-district.workers.dev/index.html |
+| Worker Version ID | `860655b2-d9ac-49c6-84e5-aead2eef2306` (created 2026-09-10T17:30:11Z) |
+| Active review URL | https://sc911-website.shelby-county-911-district.workers.dev/index.html |
 
-**Manual Wrangler contrast:** Earlier version `777f2635-36b4-4f87-a2db-6bc5f29003a0` (2026-09-10T05:15Z) was a CLI/`wrangler deploy` upload before Git Connect. The `860655b2-…` version is tied to the Cloudflare Workers Builds check on the merge commit.
+**Historical (pre–Git Connect / rename era) version IDs** — keep for rollback history; Worker name then was still `sc911-team-review` in some records:
 
-### Pull request previews
+- Manual Wrangler: `777f2635-36b4-4f87-a2db-6bc5f29003a0` (2026-09-10T05:15Z)
+- Earlier rollback reference: `be710ffa-09d2-46f9-b60d-415ce73cd768`
 
-| Topic | Evidence |
-|-------|----------|
-| Dashboard | “Builds for non-production branches” enabled; version command `npx wrangler versions upload` |
-| `wrangler.jsonc` | `"preview_urls": false` on `main` |
-| PR #2 branch head `a4b0050…` | Only check present: `validate-site`. **No** `Workers Builds: …` check on that PR head |
-| Preview URL / noindex on a PR preview host | **Not demonstrated** in this inspection (no PR preview deployment check-run found for PR #2) |
+Old host `https://sc911-team-review.shelby-county-911-district.workers.dev/index.html` returns **404** after the approved rename.
 
-Production workers.dev review host **does** send `x-robots-tag: noindex, nofollow, noarchive` (verified via live `curl` on HTML/CSS/images/robots.txt).
+### PR previews — required; status as of this update
 
-### Does GitHub Actions also deploy?
+PR previews are **required**. Current implementation work:
 
-**No.** The only Actions workflow runs `node scripts/check-site.mjs` only (no Wrangler/Cloudflare deploy actions). Publishing is via Cloudflare Workers Builds (and optional manual `npm run deploy` / Wrangler).
+| Item | Status |
+|------|--------|
+| [PR #4](https://github.com/ShelbyCounty911/sc911-website/pull/4) | Open — tip `58a11ad69d94cda1627592c54bb79b0e1cd2e094` |
+| `wrangler.jsonc` on PR #4 | `"preview_urls": true` (still `false` on `main` until merge) |
+| Required check | `Workers Builds: sc911-website` (also on Protect main / classic protection) |
+| PR #4 Actions | https://github.com/ShelbyCounty911/sc911-website/actions/runs/34516802180 — `validate-site` **success** |
+| PR #4 Workers Builds | https://github.com/ShelbyCounty911/sc911-website/runs/103004261294 — **success** |
+| Cloudflare Build ID | `c1768118-d170-4ec4-b25e-18747155bee4` |
+| Uploaded Version ID | `4c0f9405-8ca5-42b9-80d6-51f437b22d2a` (preview attempt; must not be treated as active `main` version) |
 
-### Do checks gate publishing or only merging?
+**Worker-level Preview URLs were still disabled (`previews_enabled=false`) after PR-branch `versions upload` alone.** Versioned preview hosts for `4c0f9405…` returned **HTTP 404**. Enabling Preview URLs on the Worker (dashboard **Domains & Routes**) or applying the config via a production Wrangler/`wrangler deploy` on `main` is still required before live preview URLs work. Cloudflare posts PR comments with preview URLs once Preview URLs are enabled.
 
-| Gate | Fact |
-|------|------|
-| Merging to `main` | Gated by **`validate-site`** (required + strict) |
-| Cloudflare publishing | **Not** gated by GitHub required checks; Workers Builds ran independently on the merge push. Manual Wrangler deploy is also not blocked by GitHub status checks |
+Production workers.dev review host **does** send `x-robots-tag: noindex, nofollow, noarchive` (verified via live `curl` on HTML).
 
 ---
 
 ## 4. Baseline and deployment validation
 
-### Mockup package comparison
+### Windows / Codex baseline
 
 | Item | Result |
 |------|--------|
-| Baseline used | `/workspace/sc911-cursor-review/public` from the GitHub package clone used for the first approved review deploy |
-| Compared to | Current `main` `public/` (`git clone` tip `4b4e283…`) |
-| Method | `diff -rq` |
-| File counts | 221 files each side |
-| Differences | **Only** `public/review.html`: added `<meta name="robots" content="noindex,nofollow">` so CI noindex check passes. No other public file content differences reported by `diff -rq` |
+| Windows Codex deliverable path | **Inaccessible** from cloud agent environments |
+| Bit-for-bit equality to Windows package | **Not claimed** — cannot be verified here |
+| Procedure | Reproducible SHA-256 manifest of `public/` (see PR #4 `docs/BASELINE-MANIFEST.md` / `docs/public-sha256-main.txt` when that branch is available) |
+| Intentional drift | `public/review.html` robots `noindex` meta added so CI preview-protection checks pass — not accidental content drift |
 
-### Live checks (review host) — not accessibility acceptance
+Do **not** treat an agent workspace clone (for example `/workspace/sc911-cursor-review/public`) as proof of equality to the Windows deliverable.
+
+### Live checks (active review host) — not accessibility acceptance
 
 Host: `https://sc911-website.shelby-county-911-district.workers.dev`
 
 | Check | Result |
 |-------|--------|
-| EN/ES homes, meetings, resources, past-meetings | HTTP **200** |
-| `style.css`, seal + slogan images | HTTP **200** |
-| Sample PDF | HTTP **200**, `%PDF-1.4` |
-| Sample MP3 | HTTP **200**, MPEG frame sync |
+| `/index.html`, `/es-index.html` (and other sampled EN/ES routes) | HTTP **200** |
+| Sample assets (CSS, images, PDF, MP3) | HTTP **200** with expected content signals |
 | `X-Robots-Tag` | `noindex, nofollow, noarchive` on sampled responses |
 | `robots.txt` | HTTP **200** |
-| Local `node scripts/check-site.mjs` on main | **PASS** (see §1) |
+| Local `node scripts/check-site.mjs` on main tip used for first Git deploy | **PASS** (see §1) |
 
-Navigation presence was previously validated in browser/layout passes during deploy work; this reporting pass reconfirmed key EN/ES routes and assets over HTTP.
-
-### Production DNS / custom domains / production website
+### Production DNS / custom domains
 
 | Item | Result |
 |------|--------|
-| Custom domains on Worker `sc911-website` | **0** (Cloudflare API) |
+| Custom domains on Worker `sc911-website` | **0** |
 | Production website / DNS changes | **None observed**; work stayed on `*.workers.dev` review Worker |
 
 ---
 
 ## Completion classification
 
-### Completed and independently verified in this session
+### Completed and verified
 
-1. GitHub Actions `Site checks` / `validate-site` on `main` and on PR #2 (workflow YAML + successful runs + local script PASS).  
-2. `Protect main` ruleset + classic protection requiring PR + `validate-site` (API-readable).  
-3. Cloudflare Git-connected Worker **`sc911-website`** auto-deployed from merge commit `4b4e283…` (Build `7e1f8cde-…`, Version `860655b2-…`, live review URL 200 + noindex).  
-4. GitHub Actions does not deploy.  
-5. Mockup `public/` parity aside from `review.html` noindex meta.  
-6. No custom domains on the review Worker.
+1. GitHub Actions `Site checks` / `validate-site` (workflow YAML + successful PR #2 / main runs + local script PASS).  
+2. `Protect main` ruleset `22798472` + classic protection: PR required; checks **`validate-site`** and **`Workers Builds: sc911-website`**; force-push/deletion blocked; admin enforce on classic.  
+3. Owner-approved Worker name **`sc911-website`** and review URL live **200** + `x-robots-tag` noindex.  
+4. First Git-connected main deploy: merge `4b4e283…`, Build `7e1f8cde-…`, Version `860655b2-…`.  
+5. GitHub Actions does not deploy; main publishing is Cloudflare Builds (`wrangler deploy`).  
+6. No custom domains on the review Worker.  
+7. Intentional `required_approving_review_count: 0` (GitHub does not enforce human Approve).
 
-### Configured but not yet demonstrated
+### Approved / intentional (not “remaining rename work”)
 
-1. **Non-production / PR preview deployments** (dashboard enables non-production builds; PR #2 head had no Workers Builds check; no preview URL verified).  
-2. Direct API listing of Builds triggers/connections (403 with available OAuth).  
-3. Human approving reviews as a merge gate (intentionally set to **0** after self-approve blocker).
+- Worker rename and review URL are **owner-approved** and in use — not leftover rename tasks.  
+- Zero required approving reviews is **intentional policy for the GitHub merge gate**; recorded owner approval remains required by project policy for consequential changes.
 
-### Failures, blockers, remaining work
+### In progress
 
-1. Worker rename: documentation or stakeholder language that still says **`sc911-team-review`** must be read as **`sc911-website`**.  
-2. Optional: add `Workers Builds: sc911-website` as a required check if publishing must be proven before merge (currently gates merge only, not CF publish).  
-3. Optional: demonstrate a PR-branch preview URL and verify noindex on that preview host.  
-4. Production cutover, accessibility certification, and content verification remain out of scope for this review setup.
+1. **PR previews (required):** [PR #4](https://github.com/ShelbyCounty911/sc911-website/pull/4) tip `58a11ad…` sets `preview_urls: true` and exercises `versions upload` (Build `c1768118-…` / Version `4c0f9405-…`). Live versioned preview URL still **404** until Worker Preview URLs are enabled.
 
-### Exact next action (if any)
+### Pending (do not claim “nothing remains”)
 
-None required for the three setup items to be considered **implemented and evidenced**. Optional follow-up: open a no-op PR branch and confirm a Workers Builds non-production run + preview URL/noindex if preview behavior must be proven.
+1. Demonstrate a **live PR preview URL** returning 200 with **noindex** after Preview URLs are enabled on the Worker (dashboard Domains & Routes and/or production deploy that applies the config); confirm Cloudflare PR comment with the preview URL.  
+2. **Independent review** of PR #4 and of this updated setup report.  
+3. **Optional:** baseline SHA-256 compare against the Windows Codex deliverable when that path is available to the reviewer.  
+4. Production cutover, accessibility certification, and full content verification remain out of scope for this review setup.
+
+### Configured but API-opaque in this environment
+
+- Direct API listing of Builds triggers/connections (403 with available OAuth) — dashboard + check-run evidence used instead.
