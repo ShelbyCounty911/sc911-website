@@ -18,15 +18,30 @@ The approved navigation is Using 9-1-1, Meetings, Training, Resources. Meetings 
 
 The owner explicitly approved the staff page with names, job titles and business emails, superseding the original charter restriction for these fields. Personal phone numbers and organization-chart metadata are excluded.
 
+## Owner-approved review Worker
+
+- Worker name: `sc911-website`
+- Review URL: https://sc911-website.shelby-county-911-district.workers.dev/index.html
+- Charter: review-only publishing. No production DNS or custom domain changes.
+
 ## CI and Cloudflare publishing
 
-- **GitHub Actions** (workflow **Site checks**, job `validate-site`) only validates the site: local links/assets, EN/ES page pairs, and preview `noindex` protections via `scripts/check-site.mjs` / `npm run check`. Actions does **not** deploy.
-- **Cloudflare Workers Builds** deploys `main` automatically to the `sc911-website` Worker (`npx wrangler deploy`).
-- **Pull request branches** use Workers Builds **versions upload** (`npx wrangler versions upload`) and versioned preview URLs when `preview_urls` is enabled in `wrangler.jsonc`. PR previews must not replace the active `main` deployment.
-- Live review URL (production branch / active deployment): https://sc911-website.shelby-county-911-district.workers.dev/index.html
-- Manual Wrangler remains available locally: `npm run deploy`, `npm run deploy:dry-run`, and `npm run preview` (`wrangler versions upload` for local use; not used by Actions).
+### GitHub Actions (validation only)
 
-Workers Builds settings (dashboard): Worker `sc911-website`, root `/`, build command empty/unused, deploy command `npx wrangler deploy`, version command `npx wrangler versions upload`, production branch `main`, builds for non-production branches enabled.
+- Workflow **Site checks** / job `validate-site` validates local links and assets, EN/ES page pairs, and preview `noindex` protections via `scripts/check-site.mjs` / `npm run check`.
+- GitHub Actions does **not** deploy. It remains validation-only.
+
+### Cloudflare Workers Builds (publish)
+
+Workers Builds is the publish path for this repository:
+
+- Pushes to `main` run the deploy command: `npx wrangler deploy` (also available locally as `npm run deploy`).
+- Non-main / pull-request branches use the version command: `npx wrangler versions upload` (also available locally as `npm run preview`).
+- With `preview_urls` set to `true` in `wrangler.jsonc`, version uploads produce versioned preview URLs for PR review.
+- Cloudflare posts pull-request comments with preview URLs when those URLs are available.
+- PR preview versions must not replace the active `main` deployment on the review URL above.
+
+Expected Workers Builds settings: Worker `sc911-website`, root `/`, build command empty or unused, production branch `main`, deploy command `npx wrangler deploy`, version command `npx wrangler versions upload`, builds for non-production branches enabled.
 
 ## Next implementation work
 
