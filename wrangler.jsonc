@@ -1,0 +1,12 @@
+{
+  "name": "sc911-team-review",
+  "account_id": "fd14180882e36accc0cf6a3c42d3c391",
+  "compatibility_date": "2026-09-09",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./public",
+    "html_handling": "none",
+    "not_found_handling": "none"
+  }
+}
