@@ -1,0 +1,13 @@
+{
+  "name": "sc911-website",
+  "private": true,
+  "description": "Shelby County 911 approved review mockup and Workers config",
+  "scripts": {
+    "check": "node scripts/check-site.mjs",
+    "deploy": "wrangler deploy",
+    "deploy:dry-run": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "4.130.0"
+  }
+}

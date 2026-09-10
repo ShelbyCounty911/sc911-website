@@ -17,6 +17,12 @@ The approved navigation is Using 9-1-1, Meetings, Training, Resources. Meetings 
 
 The owner explicitly approved the staff page with names, job titles and business emails, superseding the original charter restriction for these fields. Personal phone numbers and organization-chart metadata are excluded.
 
+## CI and review deploy
+
+- Run `npm run check` locally (or rely on the GitHub Action **Site checks** / job `validate-site`) to validate local links and assets, EN/ES page pairs, and preview `noindex` protections.
+- Manual Wrangler deploy remains valid: `npm run deploy` (or `npx wrangler deploy`) against the existing `sc911-team-review` Worker.
+- Once Cloudflare Workers Builds is connected, expected settings: Worker `sc911-team-review`, root `/`, build command empty or unused, deploy command `npx wrangler deploy`, production branch `main`. The owner must Connect GitHub under Worker Settings → Builds (Cloudflare GitHub App). Auto-deploy is not active until that dashboard step is done.
+
 ## Next implementation work
 
 Move the approved design into the approved static framework with reusable components, schema-validated recurring content, automatic date lifecycle and English/Spanish parity. Existing HTML is the review baseline, not the final authoring system.
