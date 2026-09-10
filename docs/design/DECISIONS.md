@@ -8,7 +8,7 @@ Living record for interactive design refinement. Status values: **approved**, **
 |------|--------|
 | Branch | `cursor/design-home-32e4` |
 | PR | https://github.com/ShelbyCounty911/sc911-website/pull/5 |
-| Focus | Home page (`index.html` / `es-index.html`) |
+| Focus | Home page + careers BambooHR embed |
 | Baseline | `main` @ `da76ea7ac0a598891d0f5e8a8ccfafd69ec74135` |
 | Review Worker | https://sc911-website.shelby-county-911-district.workers.dev/index.html (unchanged until merge approval) |
 
@@ -27,6 +27,7 @@ Living record for interactive design refinement. Status values: **approved**, **
 | Stay on static HTML/CSS mockup | No Astro/CMS/forms/trackers/external fonts |
 | Home: remove Text-to-911 availability sentence | Requested 2026-09-10 — EN/ES home only |
 | Home: say “call or text 9-1-1” instead of “call 9-1-1” | Utility bar + feature eyebrow on EN/ES home |
+| Careers: BambooHR job-board embed | Owner-requested exception to “no new services”; EN/ES careers pages load `shelbycounty911.bamboohr.com/js/embed.js` |
 
 ## In progress
 
