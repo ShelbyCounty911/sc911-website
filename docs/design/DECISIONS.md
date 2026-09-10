@@ -28,7 +28,7 @@ Living record for interactive design refinement. Status values: **approved**, **
 | Home: remove Text-to-911 availability sentence | Requested 2026-09-10 — EN/ES home only |
 | Home: say “call or text 9-1-1” instead of “call 9-1-1” | Utility bar + feature eyebrow on EN/ES home |
 | Careers: BambooHR job-board embed | Owner-requested exception to “no new services”; EN/ES careers pages load `shelbycounty911.bamboohr.com/js/embed.js` |
-| Teacher and parent resources = separate page under Resources | Moved off Using 9-1-1; EN/ES pair at `teacher-parent-resources.html` / `es-teacher-parent-resources.html` |
+| Teacher and parent resources = separate page under Resources | Moved off Using 9-1-1 with no leftover pointer; EN/ES pair at `teacher-parent-resources.html` / `es-teacher-parent-resources.html` |
 
 ## In progress
 
