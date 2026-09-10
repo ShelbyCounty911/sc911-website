@@ -43,6 +43,10 @@ Workers Builds is the publish path for this repository:
 
 Expected Workers Builds settings: Worker `sc911-website`, root `/`, build command empty or unused, production branch `main`, deploy command `npx wrangler deploy`, version command `npx wrangler versions upload`, builds for non-production branches enabled.
 
+### Preview rebuild note
+
+Rebuild requested 2026-09-10T19:47Z on this branch to re-verify the Cloudflare-returned Preview URL (check summary), EN/ES + sample assets, and `X-Robots-Tag: noindex`, without changing the active main review deployment.
+
 ## Next implementation work
 
 Move the approved design into the approved static framework with reusable components, schema-validated recurring content, automatic date lifecycle and English/Spanish parity. Existing HTML is the review baseline, not the final authoring system.
