@@ -5,13 +5,13 @@ Approved public review prototype for the Shelby County 911 website migration. Th
 ## Contents
 
 - `public/`: approved bilingual mockup, public documents and media.
-- `wrangler.jsonc`: existing Cloudflare review Worker configuration.
+- `wrangler.jsonc`: Cloudflare Worker configuration for `sc911-website`.
 
 The repository name `sc911-website` and public visibility were approved by the project owner on September 9, 2026. Repository creation and remote configuration remain pending verification.
 
 ## Boundaries
 
-Publish only to the existing `sc911-team-review` Worker during review. Do not change production domain routes or DNS. Keep previews non-indexable. Do not commit WordPress backups, SQL, credentials, private discovery files, or restricted records.
+Publish only to the existing `sc911-website` Worker during review. Do not change production domain routes or DNS. Keep previews non-indexable. Do not commit WordPress backups, SQL, credentials, private discovery files, or restricted records.
 
 The approved navigation is Using 9-1-1, Meetings, Training, Resources. Meetings shows upcoming meetings only. Resources links to the combined Past meetings and minutes page and a separate Financial audits page. Training shows upcoming events only.
 
@@ -20,8 +20,9 @@ The owner explicitly approved the staff page with names, job titles and business
 ## CI and review deploy
 
 - Run `npm run check` locally (or rely on the GitHub Action **Site checks** / job `validate-site`) to validate local links and assets, EN/ES page pairs, and preview `noindex` protections.
-- Manual Wrangler deploy remains valid: `npm run deploy` (or `npx wrangler deploy`) against the existing `sc911-team-review` Worker.
-- Once Cloudflare Workers Builds is connected, expected settings: Worker `sc911-team-review`, root `/`, build command empty or unused, deploy command `npx wrangler deploy`, production branch `main`. The owner must Connect GitHub under Worker Settings → Builds (Cloudflare GitHub App). Auto-deploy is not active until that dashboard step is done.
+- Manual Wrangler deploy remains valid: `npm run deploy` (or `npx wrangler deploy`) against the `sc911-website` Worker.
+- Live review URL: https://sc911-website.shelby-county-911-district.workers.dev/index.html
+- Once Cloudflare Workers Builds is connected, expected settings: Worker `sc911-website`, root `/`, build command empty or unused, deploy command `npx wrangler deploy`, production branch `main`. The owner must Connect GitHub under Worker Settings → Builds (Cloudflare GitHub App). Auto-deploy is not active until that dashboard step is done.
 
 ## Next implementation work
 
