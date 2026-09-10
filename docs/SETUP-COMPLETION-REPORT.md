@@ -141,3 +141,10 @@ Windows Codex deliverable path inaccessible from cloud agents — bit-for-bit eq
 1. Independent review/merge of PR #4 then PR #3.
 2. Optional Windows baseline compare.
 3. Production cutover / a11y certification out of scope.
+
+
+## Independent review update — September 10, 2026
+
+This update supersedes the pending baseline and merge statements above. Codex compared the original prepared Windows deliverable with the PR #4 manifest at 7c8cdfa24d14ad0b6d25edf3dc45639fdd27a683: 221 files; none added or missing; 217 exact SHA-256 matches, including all PDFs. _headers, robots.txt, and style.css differ only in CRLF/LF line endings. review.html differs only by the intended noindex meta tag. The baseline comparison is complete.
+
+The owner approved the merge sequence after independent review. PR #4 was merged as 81af7d33bf7283cd203aee1aa7e6d1b0b8f6cdaa. Its required checks passed in GitHub before merging. The earlier PR #3 check table is historical; its corrected pre-update tip was 1dfb275a35f54cfc37b25a944f159a9931944da3, with a successful Cloudflare bot deployment comment. Final report-branch checks must pass again after updating against main. PR #3 merge and final deployment validation remain pending at this document commit.
