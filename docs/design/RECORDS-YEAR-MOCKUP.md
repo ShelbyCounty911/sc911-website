@@ -11,3 +11,5 @@ Design: native year disclosures, newest open, meetings with available document/v
 Only a tiny progressive enhancement opens a year named in the URL fragment; core native disclosures and links work without JavaScript. Existing site styles and branding reused; component CSS is isolated. No services, DNS, main navigation, production pages, or policy changes.
 
 Validation: site link/asset, language pairing, preview indexing checks pass for 77 pages; review prototype visually before approval.
+
+Revision: older years now share the 2026 row layout; all original document links preserved. Removed 2025 meeting-details links. Added August, October, December 2025 Board minute links from the live archive; research fetch returned cache misses, so retrieval remains unverified. Executive records retained without details links.
