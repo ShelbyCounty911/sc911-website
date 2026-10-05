@@ -17,3 +17,5 @@ Revision: older years now share the 2026 row layout; all original document links
 Date reconciliation: all 122 historical PDF-linked rows (2006–2025) now show full dates from the live archive, matched by PDF filename. February 2008 matched to the explicit February 7, 2008 source row while preserving the recovered local PDF link. Special meeting dates preserved. EN/ES updated; existing event-only dates and 2026 dates unchanged.
 
 Approved October 5, 2026 by project owner: adopt combined year archive and retire standalone audits page. Promoted to past-meetings.html and Spanish pair; Resources has one combined link. Old audits and prototype URLs redirect to the combined archive. Records and original files retained.
+
+Release verification: 21 year sections, five recordings, 136 preserved local document links (119 minutes + 17 audits) in each language, and one combined Resources entry. Standalone audits retirement is a 301 redirect with an HTML fallback link.
