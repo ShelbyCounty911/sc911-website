@@ -1,0 +1,21 @@
+# Year-by-year records mockup
+
+Status: proposed; owner requested option 1 mockup on October 5, 2026. Not approved for replacement of current navigation/pages.
+
+Entry: public/records-mockup.html (Spanish: es-records-mockup.html). Separate from existing pages. Based on the meeting-content branch for PR #6.
+
+Design: native year disclosures, newest open, meetings with available document/video links, then the audit labeled by fiscal year. All 119 existing historical minute links and 17 existing audit links retained. All years 2006–2026 represented. No invented audits for missing years. Older event records and historical PDFs remain separate rows unless a verified match exists.
+
+2026 Board video and three approved-minute links transcribed from https://shelbycounty911.org/archives/ on October 5, 2026. Four new video links and two PDF requests were not retrievable by the research fetcher; destination playback/file availability remains unverified. Mockup does not claim document or video accessibility conformance. Existing Executive materials and October Board records come from PR #6.
+
+Only a tiny progressive enhancement opens a year named in the URL fragment; core native disclosures and links work without JavaScript. Existing site styles and branding reused; component CSS is isolated. No services, DNS, main navigation, production pages, or policy changes.
+
+Validation: site link/asset, language pairing, preview indexing checks pass for 77 pages; review prototype visually before approval.
+
+Revision: older years now share the 2026 row layout; all original document links preserved. Removed 2025 meeting-details links. Added August, October, December 2025 Board minute links from the live archive; research fetch returned cache misses, so retrieval remains unverified. Executive records retained without details links.
+
+Date reconciliation: all 122 historical PDF-linked rows (2006–2025) now show full dates from the live archive, matched by PDF filename. February 2008 matched to the explicit February 7, 2008 source row while preserving the recovered local PDF link. Special meeting dates preserved. EN/ES updated; existing event-only dates and 2026 dates unchanged.
+
+Approved October 5, 2026 by project owner: adopt combined year archive and retire standalone audits page. Promoted to past-meetings.html and Spanish pair; Resources has one combined link. Old audits and prototype URLs redirect to the combined archive. Records and original files retained.
+
+Release verification: 21 year sections, five recordings, 136 preserved local document links (119 minutes + 17 audits) in each language, and one combined Resources entry. Standalone audits retirement is a 301 redirect with an HTML fallback link.
