@@ -15,3 +15,5 @@ Validation: site link/asset, language pairing, preview indexing checks pass for 
 Revision: older years now share the 2026 row layout; all original document links preserved. Removed 2025 meeting-details links. Added August, October, December 2025 Board minute links from the live archive; research fetch returned cache misses, so retrieval remains unverified. Executive records retained without details links.
 
 Date reconciliation: all 122 historical PDF-linked rows (2006–2025) now show full dates from the live archive, matched by PDF filename. February 2008 matched to the explicit February 7, 2008 source row while preserving the recovered local PDF link. Special meeting dates preserved. EN/ES updated; existing event-only dates and 2026 dates unchanged.
+
+Approved October 5, 2026 by project owner: adopt combined year archive and retire standalone audits page. Promoted to past-meetings.html and Spanish pair; Resources has one combined link. Old audits and prototype URLs redirect to the combined archive. Records and original files retained.
