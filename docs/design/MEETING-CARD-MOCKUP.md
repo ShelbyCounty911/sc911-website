@@ -5,3 +5,5 @@ Requested October 5, 2026; design approval pending. Standalone bilingual preview
 Owner refinement: remove past meeting cards; past meetings link directly to the combined Meeting records and audits page. Prototype now contains only the upcoming card and one archive link.
 
 Upcoming page proposal: meetings.html and its Spanish pair now demonstrate the full redesigned page with date-ordered November Executive and December Board cards, next-meeting emphasis, a single past archive destination, and training link. Card accepted by owner; full page design awaiting approval. Upcoming dates/time/location remain provisional from existing collected records; missing notices and online links not invented.
+
+Owner refinement: removed redundant Current meeting record links from upcoming cards; attendance and document information appears directly on the Meetings page.
