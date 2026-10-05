@@ -11,3 +11,5 @@ Owner refinement: removed redundant Current meeting record links from upcoming c
 Owner refinement: removed the visible time-confirmation label from upcoming cards in both languages. Published times retained; no new source verification claimed.
 
 Owner refinement: removed the separate Public notice section and related check-back wording from upcoming cards. Remaining document sections: agenda and supporting materials. This records a presentation change, not a legal determination about notice obligations.
+
+Owner refinement: removed all Meeting materials links and materials wording in the combined archive introduction, in both languages.
