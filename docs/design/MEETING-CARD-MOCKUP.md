@@ -9,3 +9,5 @@ Upcoming page proposal: meetings.html and its Spanish pair now demonstrate the f
 Owner refinement: removed redundant Current meeting record links from upcoming cards; attendance and document information appears directly on the Meetings page.
 
 Owner refinement: removed the visible time-confirmation label from upcoming cards in both languages. Published times retained; no new source verification claimed.
+
+Owner refinement: removed the separate Public notice section and related check-back wording from upcoming cards. Remaining document sections: agenda and supporting materials. This records a presentation change, not a legal determination about notice obligations.
