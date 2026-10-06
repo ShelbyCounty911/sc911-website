@@ -13,3 +13,5 @@ Direction 5: compact introduction, dark emergency strip, paired When to call/Tex
 Owner refinement: combine When to call and What to expect in one black panel next to Text-to-911. Both original section anchors preserved. Contact and FAQ designs unchanged.
 
 Owner refinement: Text-to-911 follows the combined black call-guidance panel; both span full width. Contacts and FAQs retained.
+
+Owner refinement: remove standalone emergency banner; place call-if-you-can message in brand-red text in Text-to-911 section, and add TN after Shelby County in availability wording. Spanish message paired.
