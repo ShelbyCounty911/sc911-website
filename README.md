@@ -14,7 +14,7 @@ The repository name `sc911-website` and public visibility were approved by the p
 
 Publish only to the existing `sc911-website` Worker during review. Do not change production domain routes or DNS. Keep previews non-indexable. Do not commit WordPress backups, SQL, credentials, private discovery files, or restricted records.
 
-The approved navigation is Using 9-1-1, Meetings, Training, Resources. Meetings shows upcoming meetings only. Resources links to the combined Past meetings and minutes page and a separate Financial audits page. Training shows upcoming events only.
+The approved navigation is Using 9-1-1, Meetings, Training, Resources. Meetings shows upcoming meetings only. Resources links to the combined Meeting records and audits page. Training shows upcoming events only.
 
 The owner explicitly approved the staff page with names, job titles and business emails, superseding the original charter restriction for these fields. Personal phone numbers and organization-chart metadata are excluded.
 
@@ -54,3 +54,9 @@ Move the approved design into the approved static framework with reusable compon
 Use short-lived branches and pull requests with protected `main` and required checks (`validate-site` and `Workers Builds: sc911-website`). Cloudflare handles publishing; GitHub Actions handles validation without a second deployment pipeline.
 
 Production release still requires content verification, accessibility checks including public documents, security and responsive testing, redirect validation, and documented deployment/rollback procedures. Approval of this mockup does not certify those release gates.
+
+## Editing static pages and shared layout
+
+Edit page content in `site/pages/`, headers and footers in `site/shared/`, and styles in `public/`. Run `npm run build` to regenerate the committed `public/*.html` files, then `npm run check`. Do not edit generated HTML directly. CI rejects generated pages that differ from their sources. This small Node build adds no browser JavaScript or framework.
+
+Obsolete prototype URLs are listed in `public/_redirects`; the original PDFs and media remain in place.

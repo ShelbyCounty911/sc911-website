@@ -6,7 +6,8 @@
     "check": "node scripts/check-site.mjs",
     "deploy": "wrangler deploy",
     "deploy:dry-run": "wrangler deploy --dry-run",
-    "preview": "wrangler versions upload"
+    "preview": "wrangler versions upload",
+    "build": "node scripts/build-site.mjs"
   },
   "devDependencies": {
     "wrangler": "4.130.0"
