@@ -7,3 +7,5 @@ Retain all existing destinations and section anchors. Present four existing grou
 Owner approved Resources appearance and requested History, Staff and Board refinements. Fix active navigation to Resources, add Home breadcrumbs, preserve full historical content and existing eight staff/eight board members. Timeline treatment for History; responsive staff/board cards. New page refinements await review. Existing owner authorization for staff names/titles/email remains unchanged; no phone numbers added.
 
 Second staff/board direction requested: staff in compact aligned name/title/email rows; board in a numbered roster (numbers are visual ordering only, not rank or office). Existing information and order preserved; History and Resources unchanged. Owner approval pending.
+
+Owner refinement: Board roster matches Staff directory row styling; remove ordinal numbers. Display names only, without inventing board offices or contacts.
