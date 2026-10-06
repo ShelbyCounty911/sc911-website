@@ -15,3 +15,5 @@ Owner refinement: combine When to call and What to expect in one black panel nex
 Owner refinement: Text-to-911 follows the combined black call-guidance panel; both span full width. Contacts and FAQs retained.
 
 Owner refinement: remove standalone emergency banner; place call-if-you-can message in brand-red text in Text-to-911 section, and add TN after Shelby County in availability wording. Spanish message paired.
+
+Final approval: owner requested all changes be pushed on October 5, 2026. Approved final homepage and Using 9-1-1 layout; remove awaiting-approval banners for main review deployment. This does not authorize production domain cutover.
