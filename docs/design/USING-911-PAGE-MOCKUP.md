@@ -11,3 +11,5 @@ Direction 4 requested October 5: editorial introduction with light emergency rai
 Direction 5: compact introduction, dark emergency strip, paired When to call/Text-to-911 panels, full-width numbered call checklist. Contact tiles and FAQ panels remain unchanged. EN/ES share layout. Owner review pending.
 
 Owner refinement: combine When to call and What to expect in one black panel next to Text-to-911. Both original section anchors preserved. Contact and FAQ designs unchanged.
+
+Owner refinement: Text-to-911 follows the combined black call-guidance panel; both span full width. Contacts and FAQs retained.
