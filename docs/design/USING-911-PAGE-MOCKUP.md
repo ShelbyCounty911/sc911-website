@@ -9,3 +9,5 @@ Owner accepted direction 2 contact tiles and expandable FAQ panels. Direction 3 
 Direction 4 requested October 5: editorial introduction with light emergency rail, split when-to-call summary, five numbered call steps across desktop, and a bordered Text-to-911 feature. Contact tiles and FAQ panels retained. Responsive steps stack on mobile; content remains unchanged. Owner review pending.
 
 Direction 5: compact introduction, dark emergency strip, paired When to call/Text-to-911 panels, full-width numbered call checklist. Contact tiles and FAQ panels remain unchanged. EN/ES share layout. Owner review pending.
+
+Owner refinement: combine When to call and What to expect in one black panel next to Text-to-911. Both original section anchors preserved. Contact and FAQ designs unchanged.
