@@ -5,3 +5,5 @@ Requested October 5, 2026. Design approval pending. Reuses existing approved sou
 Second direction requested by owner: split introduction and emergency panel; horizontal section links; paired emergency guidance cards; full-width Text-to-911 feature; four-column contact tiles; separate FAQ panels. Same content and anchors, with responsive single-column guidance and two-column contacts. Approval remains pending.
 
 Owner accepted direction 2 contact tiles and expandable FAQ panels. Direction 3 keeps their markup and styling intact; revises only the introduction, emergency callout, when-to-call/what-to-expect guidance, and Text-to-911 feature. Full-width introduction, horizontal emergency strip, stacked guidance with numbered steps, and three texting use-case columns. Overall approval pending.
+
+Direction 4 requested October 5: editorial introduction with light emergency rail, split when-to-call summary, five numbered call steps across desktop, and a bordered Text-to-911 feature. Contact tiles and FAQ panels retained. Responsive steps stack on mobile; content remains unchanged. Owner review pending.
