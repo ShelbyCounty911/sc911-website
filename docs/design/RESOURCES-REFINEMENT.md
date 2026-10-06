@@ -11,3 +11,5 @@ Second staff/board direction requested: staff in compact aligned name/title/emai
 Owner refinement: Board roster matches Staff directory row styling; remove ordinal numbers. Display names only, without inventing board offices or contacts.
 
 Owner requested proposed board refinement: two-column compact roster, subtle dividers, brand-red accents, and upcoming-meetings link below. Link names board and committee meetings accurately; mobile single-column. Names unchanged.
+
+Owner approved publication to main on October 5, 2026. Final design: grouped Resources directory, full-content History timeline, compact staff directory, two-column Board roster with corrected thin accents and meeting link. Main remains review only; no domain cutover authorized.
