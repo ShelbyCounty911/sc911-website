@@ -1,7 +1,3 @@
-/audits.html /past-meetings.html 301
-/es-audits.html /es-past-meetings.html 301
-/records-mockup.html /past-meetings.html 301
-/es-records-mockup.html /es-past-meetings.html 301
 /es-meeting-2125.html /es-past-meetings.html#year-2025 301
 /es-meeting-2127.html /es-past-meetings.html#year-2025 301
 /es-meeting-2135.html /es-past-meetings.html#year-2025 301
@@ -36,3 +32,25 @@
 /meeting-2286.html /past-meetings.html#year-2026 301
 /meeting-2288.html /meetings.html 301
 /meeting-2290.html /past-meetings.html#year-2026 301
+
+/archive.html /past-meetings.html 301
+/es-archive.html /es-past-meetings.html 301
+/audit-2006.html /past-meetings.html#year-2006 301
+/es-audit-2006.html /es-past-meetings.html#year-2006 301
+/audit-2022.html /past-meetings.html#year-2022 301
+/es-audit-2022.html /es-past-meetings.html#year-2022 301
+/audits.html /past-meetings.html 301
+/es-audits.html /es-past-meetings.html 301
+/minutes-april.html /past-meetings.html#year-2025 301
+/es-minutes-april.html /es-past-meetings.html#year-2025 301
+/minutes-february.html /past-meetings.html#year-2025 301
+/es-minutes-february.html /es-past-meetings.html#year-2025 301
+/minutes-june.html /past-meetings.html#year-2025 301
+/es-minutes-june.html /es-past-meetings.html#year-2025 301
+/records-mockup.html /past-meetings.html 301
+/es-records-mockup.html /es-past-meetings.html 301
+/meeting-cards-mockup.html /meetings.html 301
+/es-meeting-cards-mockup.html /es-meetings.html 301
+/training-design.html /training.html 301
+/es-training-design.html /es-training.html 301
+/review.html /resources.html 301

@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { execFileSync } from 'node:child_process';
+execFileSync(process.execPath, ['scripts/build-site.mjs', '--check'], { stdio: 'inherit' });
 /**
  * Site validation for public/ review mockup.
  *
