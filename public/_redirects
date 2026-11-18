@@ -96,8 +96,6 @@
 /2023/02/07/publicsafetyav /rfps.html 301
 /feed/ /index.html 301
 /feed /index.html 301
-/event/* /meetings.html 301
-/events/* /meetings.html 301
 # Uploaded documents and media
 /wp-content/uploads/2015/10/11-911-0055-Radio-Birthday.mp3 /media/11-911-0055-Radio-Birthday.mp3 301
 /wp-content/uploads/2015/10/11-911-0056-Radio-Car-Crash.mp3 /media/11-911-0056-Radio-Car-Crash.mp3 301
@@ -249,3 +247,6 @@
 /wp-content/uploads/2026/10/2026-04-02-2026-Board-Meeting-Minutes.pdf /documents/2026-04-02-2026-Board-Meeting-Minutes.pdf 301
 /wp-content/uploads/2026/10/2026-06-04-26-Board-Meeting-Minutes.pdf /documents/2026-06-04-26-Board-Meeting-Minutes.pdf 301
 /wp-content/uploads/2022/10/UPS-Bid-October-2022-Final-1.pdf /rfps.html 301
+# Wildcard rules last: Cloudflare counts every rule after the first wildcard as dynamic (limit 100)
+/event/* /meetings.html 301
+/events/* /meetings.html 301

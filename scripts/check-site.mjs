@@ -291,12 +291,18 @@ function checkRedirectTargets() {
   if (!fs.existsSync(file)) return;
   let bad = 0;
   let total = 0;
+  // Cloudflare limits: 2,000 static + 100 dynamic rules. Any rule after the first
+  // wildcard/placeholder rule counts as dynamic, so wildcard rules belong at the end.
+  let dynamic = 0;
+  let firstDynamicLine = 0;
   const seen = new Set();
   for (const [i, line] of fs.readFileSync(file, 'utf8').split(/\r?\n/).entries()) {
     const t = line.trim();
     if (!t || t.startsWith('#')) continue;
     const [from, to] = t.split(/\s+/);
     total++;
+    if (!firstDynamicLine && /[*:]/.test(from)) firstDynamicLine = i + 1;
+    if (firstDynamicLine) dynamic++;
     if (seen.has(from)) {
       fail(`_redirects line ${i + 1}: duplicate source ${from}`);
       bad++;
@@ -309,7 +315,15 @@ function checkRedirectTargets() {
       bad++;
     }
   }
-  if (!bad) pass(`Redirects: all ${total} targets exist, no duplicate sources`);
+  if (dynamic > 100) {
+    fail(`_redirects: ${dynamic} rules count as dynamic (limit 100); move wildcard rules (first at line ${firstDynamicLine}) to the end`);
+    bad++;
+  }
+  if (total - dynamic > 2000) {
+    fail(`_redirects: ${total - dynamic} static rules (limit 2000)`);
+    bad++;
+  }
+  if (!bad) pass(`Redirects: all ${total} targets exist, no duplicate sources, ${dynamic}/100 dynamic`);
 }
 
 function main() {
