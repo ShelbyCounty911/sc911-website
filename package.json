@@ -1,13 +1,18 @@
 {
   "name": "sc911-website",
   "private": true,
+  "type": "module",
   "description": "Shelby County 911 approved review mockup and Workers config",
   "scripts": {
     "check": "node scripts/check-site.mjs",
+    "test": "node --test test/",
+    "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "deploy:dry-run": "wrangler deploy --dry-run",
     "preview": "wrangler versions upload",
-    "build": "node scripts/build-site.mjs"
+    "build": "node scripts/build-site.mjs",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
   },
   "devDependencies": {
     "wrangler": "4.130.0"

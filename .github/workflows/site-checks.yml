@@ -27,3 +27,6 @@ jobs:
 
       - name: Shared layout and redirect checks
         run: node scripts/check-cleanup.mjs
+
+      - name: Worker unit tests
+        run: node --test test/

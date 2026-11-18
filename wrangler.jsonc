@@ -4,9 +4,41 @@
   "compatibility_date": "2026-09-09",
   "workers_dev": true,
   "preview_urls": true,
+  "main": "src/worker.js",
   "assets": {
     "directory": "./public",
+    "binding": "ASSETS",
     "html_handling": "none",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    // Only these paths reach the Worker; everything else is served straight from public/.
+    "run_worker_first": [
+      "/api/*",
+      "/files/*",
+      "/meetings.html",
+      "/es-meetings.html",
+      "/past-meetings.html",
+      "/es-past-meetings.html"
+    ]
+  },
+  // Meeting records pushed by Power Automate. See docs/MEETINGS-SETUP.md to create it.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sc911-website",
+      "database_id": "REPLACE-WITH-D1-DATABASE-ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // Published meeting PDFs (agendas, materials, minutes). Never overwritten.
+  "r2_buckets": [
+    {
+      "binding": "FILES",
+      "bucket_name": "sc911-website-files"
+    }
+  ],
+  "vars": {
+    // Review site stays out of search engines. The go-live PR removes this.
+    "ROBOTS_TAG": "noindex, nofollow, noarchive"
   }
+  // Secret (not in this file): PUBLISH_TOKEN, set with `npx wrangler secret put PUBLISH_TOKEN`.
 }
