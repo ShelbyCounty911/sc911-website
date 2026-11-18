@@ -22,7 +22,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const PUBLIC = path.join(ROOT, 'public');
 
-const UNPAIRED_ALLOWED = new Set(['review.html']);
+const UNPAIRED_ALLOWED = new Set(['review.html', '404.html']);
 
 /** @type {string[]} */
 const failures = [];
@@ -141,7 +141,11 @@ function checkLinksAndAssets(htmlFiles) {
         } catch {
           // keep as-is
         }
-        targetFile = path.resolve(baseDir, decoded);
+        // Root-relative paths (and <base href="/">) resolve from the site root, i.e. public/
+        targetFile = decoded.startsWith('/')
+          ? path.join(PUBLIC, decoded)
+          : path.resolve(baseDir, decoded);
+        if (path.resolve(targetFile) === PUBLIC) continue;
         if (!targetFile.startsWith(PUBLIC + path.sep) && targetFile !== PUBLIC) {
           fail(`${relFile}: path escapes public/: ${raw}`);
           linkErrors++;
