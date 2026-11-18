@@ -37,9 +37,10 @@ Visitors ──▶ shelbycounty911.org ──▶ Worker ──▶ D1 (records)  
 ```
 
 - **D1** (SQLite) stores records. Queries like "upcoming meetings" and "past meetings for 2027" are simple SQL.
-- **R2** stores uploaded files at permanent public paths, e.g. `/files/meetings/2027-02-04-board/agenda.pdf`.
-- The Worker runs first only for dynamic paths (`/meetings*`, `/past-meetings*`, `/training*`, `/careers*`, `/es-…` equivalents, `/files/*`, `/api/publish`), using `assets.run_worker_first`. Everything else is served as static assets, unchanged.
-- Pages reuse the existing HTML, CSS, shared header and footer, so they look identical to today's static pages.
+- **R2** stores uploaded files at permanent, content-addressed public paths, e.g. `/files/meetings/42/<hash>-Board-Agenda.pdf`. Files are never overwritten.
+- The Worker runs first only for the paths it renders (`/(es-)meetings.html`, `/(es-)past-meetings.html`, later training and careers), plus `/files/*` and `/api/*`, using `assets.run_worker_first`. Everything else is served as static assets, unchanged.
+- The Worker uses the static page as the template and fills in the records (HTMLRewriter), so pages keep the existing HTML, CSS, shared header and footer. If D1 is empty or unreadable, the static page is served unchanged.
+- **Recordings** are already hosted on Cloudflare Stream (captioned); the list stores the Stream link.
 
 ## Lists
 
@@ -64,8 +65,8 @@ All lists live on one SharePoint site (e.g. *Website Content*). Approval uses a 
 | Public note (ES) | Multi-line text | Optional; English shown with a Spanish label if empty |
 
 Rules:
-- **Meetings are never deleted from the public site.** A removed list item or a delete request is rejected; use Status = Canceled. Canceled and rescheduled meetings stay on their permanent page with the status shown prominently (Open Meetings Act notice trail).
-- Each meeting gets a **permanent URL** derived at first publish and never changed, even if the date moves: `/meetings/<first-date>-<body-slug>.html` (EN) and `/es-meetings/…` (ES).
+- **Meetings are never deleted from the public site.** A removed list item or a delete request is rejected; use Status = Canceled. Canceled and rescheduled meetings stay visible with the status shown prominently (Open Meetings Act notice trail). Rescheduled cards show the originally published date.
+- **No per-meeting pages**, per the owner's Oct 5, 2026 decision (`docs/MEETING-DETAIL-RETIREMENT.md`). Upcoming meetings are cards on Meetings; past meetings are rows in the year-by-year archive. Each has a stable anchor, `#meeting-<itemId>`.
 - Upcoming vs. past is computed at request time in America/Chicago. Past meetings appear in the year-by-year archive alongside the static 2006–2025 records.
 
 ### Public trainings
@@ -133,10 +134,10 @@ Jobs disappear from the page automatically the day after the closing date (Centr
 
 ## Open questions
 
-1. **Power Automate Premium:** the flow's HTTP action needs a Premium license for the flow owner (service account). Confirm licensing or budget.
+1. **Power Automate Premium:** the flow's HTTP action needs a Premium license for the flow owner (service account). The District has Microsoft 365 G5, which includes Power Automate with **standard** connectors only, so one Power Automate Premium license for the service account is likely needed. Confirm against the tenant's license SKUs, or budget for one.
 2. **Spanish:** who translates the optional Spanish fields, and is English-with-a-Spanish-label acceptable when they're empty?
 3. **Approvers:** who approves each list (meetings, trainings, jobs), and who is the backup?
-4. **Recordings:** where captioned recordings are hosted today, and whether that continues.
+4. ~~**Recordings:** where captioned recordings are hosted today.~~ Resolved: Cloudflare Stream (existing archive links already point there).
 
 ## Testing before cutover
 
