@@ -21,3 +21,9 @@ jobs:
 
       - name: Validate site
         run: node scripts/check-site.mjs
+
+      - name: Generated pages match sources
+        run: node scripts/build-site.mjs --check
+
+      - name: Shared layout and redirect checks
+        run: node scripts/check-cleanup.mjs
