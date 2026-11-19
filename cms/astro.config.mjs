@@ -8,10 +8,7 @@ import emdash from "emdash/astro";
 // the Worker's hostname before the first deploy: the first person to reach a new site becomes Admin.
 // Local `astro dev` keeps EmDash's default sign-in (and the dev-only bypass).
 const building = process.argv.includes("build");
-const teamDomain = process.env.CF_ACCESS_TEAM_DOMAIN;
-if (building && !teamDomain) {
-	throw new Error("Set CF_ACCESS_TEAM_DOMAIN (e.g. yourteam.cloudflareaccess.com) before building for deploy.");
-}
+const teamDomain = process.env.CF_ACCESS_TEAM_DOMAIN ?? "sc911.cloudflareaccess.com";
 
 export default defineConfig({
 	output: "server",
