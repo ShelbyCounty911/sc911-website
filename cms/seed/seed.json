@@ -1,0 +1,167 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "SC911",
+    "description": "Shelby County, TN Emergency Communications District public site",
+    "author": "Shelby County 911 District"
+  },
+  "settings": {
+    "title": "Shelby County, TN Emergency Communications District",
+    "tagline": "When life is on the line"
+  },
+  "collections": [
+    {
+      "slug": "meetings",
+      "label": "Meetings",
+      "labelSingular": "Meeting",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Internal title (e.g. Board 2026-12-03)",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "body",
+          "label": "Body",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": [
+              "Board of Directors",
+              "Executive Committee"
+            ]
+          }
+        },
+        {
+          "slug": "start",
+          "label": "Start (Central time)",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "end",
+          "label": "End (Central time)",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "meeting_status",
+          "label": "Status",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": [
+              "Scheduled",
+              "Rescheduled",
+              "Canceled"
+            ]
+          }
+        },
+        {
+          "slug": "original_start",
+          "label": "Original start, Central time (set when rescheduled)",
+          "type": "datetime"
+        },
+        {
+          "slug": "location_name",
+          "label": "Location name (blank = District office)",
+          "type": "string"
+        },
+        {
+          "slug": "location_address",
+          "label": "Location address",
+          "type": "text"
+        },
+        {
+          "slug": "online_url",
+          "label": "Online attendance link (https)",
+          "type": "url"
+        },
+        {
+          "slug": "recording_url",
+          "label": "Recording link (https)",
+          "type": "url"
+        },
+        {
+          "slug": "agenda",
+          "label": "Agenda (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "material_1",
+          "label": "Supporting material 1 (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "material_2",
+          "label": "Supporting material 2 (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "material_3",
+          "label": "Supporting material 3 (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "material_4",
+          "label": "Supporting material 4 (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "material_5",
+          "label": "Supporting material 5 (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "minutes",
+          "label": "Approved minutes (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "note_en",
+          "label": "Public note (English)",
+          "type": "text"
+        },
+        {
+          "slug": "note_es",
+          "label": "Public note (Spanish)",
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "content": {
+    "meetings": [
+      {
+        "id": "exec-2026-11-23",
+        "slug": "exec-2026-11-23",
+        "status": "published",
+        "data": {
+          "title": "Executive Committee 2026-11-23",
+          "body": "Executive Committee",
+          "start": "2026-11-23T10:00:00Z",
+          "end": "2026-11-23T11:00:00Z",
+          "meeting_status": "Scheduled"
+        }
+      },
+      {
+        "id": "board-2026-12-03",
+        "slug": "board-2026-12-03",
+        "status": "published",
+        "data": {
+          "title": "Board of Directors 2026-12-03",
+          "body": "Board of Directors",
+          "start": "2026-12-03T08:30:00Z",
+          "end": "2026-12-03T10:00:00Z",
+          "meeting_status": "Scheduled"
+        }
+      }
+    ]
+  }
+}

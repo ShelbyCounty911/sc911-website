@@ -1,0 +1,34 @@
+---
+// Serves the approved pages (generated from ../site by scripts/build-static.mjs) at their new URLs.
+// Meetings and Meeting records pages are filled from the EmDash "meetings" collection.
+import { getEmDashCollection } from "emdash";
+import pages from "../generated/static-pages.json";
+import { entryToMeeting, injectMeetings } from "../lib/meetings.js";
+
+const raw = Astro.params.path ?? "";
+const key = raw === "" ? "/" : `/${raw.replace(/\/+$/, "")}/`;
+const page = pages[key];
+const headers = { "Content-Type": "text/html; charset=utf-8", "X-Robots-Tag": "noindex, nofollow, noarchive" };
+
+if (!page) {
+	return new Response(pages["404"].html, { status: 404, headers });
+}
+if (raw !== "" && !Astro.url.pathname.endsWith("/")) {
+	return Astro.redirect(`${key}${Astro.url.search}`, 301);
+}
+
+const kind = /^\/(es\/)?meetings\/$/.test(key) ? "upcoming" : /^\/(es\/)?records\/$/.test(key) ? "records" : null;
+if (!kind) {
+	return new Response(page.html, { headers });
+}
+
+let meetings = [];
+try {
+	const { entries } = await getEmDashCollection("meetings", { status: "published", limit: 1000 });
+	meetings = entries.map((e) => entryToMeeting(e, Astro.locals));
+} catch (err) {
+	console.error("meetings read failed; serving static page", err);
+}
+const res = injectMeetings(page.html, meetings, kind, page.lang);
+return new Response(res.body, { headers: { ...headers, "Cache-Control": "public, max-age=0, must-revalidate" } });
+---
