@@ -38,15 +38,41 @@ This spike evaluates replacing the static site and the Lists + Power Automate pu
    (`centralWallToUtc` in `cms/src/lib/meetings.js`).
 2. **File lists.** A repeater containing file fields makes the whole entry read-only ("field types this version does not
    support"). Replaced with five fixed "Supporting material" file fields.
-3. **Notice-posted date.** The site uses EmDash's publication date, and editors can change it in the admin. For the Open Meetings
-   Act record this has to be locked down: a plugin, or a role that can't change it. Still open.
+3. **Notice-posted date.** The site uses EmDash's publication date. Changing it requires `content:publish_any` (Editor and up), so
+   Contributors and Authors can't, but the approver can. For the Open Meetings Act record it still has to be locked: a small plugin
+   that rejects changes after first publish, or a separate notice-date field. Still open.
+
+## Roles (from EmDash 1.5 permission rules)
+
+Read from `@emdash-cms/auth` and `emdash/dist/authorize-*.mjs`. Live check with a second account still pending.
+
+| Action | Contributor (20) | Author (30) | Editor (40) | Admin (50) |
+|---|---|---|---|---|
+| Create a meeting (draft) | yes | yes | yes | yes |
+| Edit own entry while it is still a draft | yes | yes | yes | yes |
+| Edit an entry after it is published | **no** | own only | any | any |
+| Publish / unpublish | **no** | own only | any | any |
+| Change publication date | no | no | yes | yes |
+| Move to Trash | no | own only | any | any |
+| Delete permanently (empty Trash) | no | no | no | yes |
+| Upload files | yes | yes | yes | yes |
+| Delete files (permanent) | no | own only | any | any |
+| Redirects, content types, settings, users | no | no | no | yes |
+
+**What this means for the workflow.** A Contributor clerk can draft new meetings, and an Editor publishes them. But once a meeting is
+published, a Contributor can't change it: adding the agenda later, posting minutes, or marking it canceled would have to be done
+by an Editor. The options:
+
+- **A.** The clerk is an Editor, and approval is a habit, not enforced.
+- **B.** The clerk is a Contributor, and the approver does every post-publish update.
+- **C.** A small plugin adds an approval step: the clerk is an Author, and publishing is blocked until an approver signs off
+  (EmDash's `content:beforePublish` hook).
 
 ## Still open before deciding
 
-- **Sign-in.** Cloudflare Access with Entra (GCC) in front of `/_emdash/admin`, mapping groups to roles. Needs a deployed test Worker
-  and an Access application (user steps).
-- **Approval.** Contributors draft and Editors publish. Confirm Contributors can't publish or delete, and that only Admins can empty Trash.
-- **Deleting media** is permanent. Rule: never delete; add a new file instead.
+- **Sign-in.** Done: Cloudflare Access with Entra in front of the whole spike Worker, verified 2026-11-19.
+- **Roles live test** with a second Entra account (new Access users start as Contributor).
+- **Deleting files** is permanent. Rule: never delete; add a new file instead. Restrict deletes to Editors.
 - **Accessibility pass on the admin screens** staff will use.
 - **Remaining collections:** trainings, other agencies' jobs, RFPs. Then make the static pages editable one at a time.
 - **CI.** Workers Builds needs a build command (`cd cms && npm ci && npm run build`) and a deploy from `cms/`. The site checks should
