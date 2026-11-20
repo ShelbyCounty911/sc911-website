@@ -106,8 +106,26 @@ files and trash any entry, so the "never delete files" rule below is a habit too
 - **Deleting files** is permanent. Rule: never delete; add a new file instead. Under option A every clerk can delete, so this relies on training.
 - **Accessibility pass on the admin screens** staff will use.
 - **Remaining collections.** Built 2026-11-20 (see below). Next: make the static pages editable one at a time.
-- **CI.** Workers Builds needs a build command (`cd cms && npm ci && npm run build`) and a deploy from `cms/`. The site checks should
-  point at the built output.
+- **CI.** Workers Builds is connected (2026-11-20; see "Automatic deploys"). The GitHub site checks still test the static site, not
+  `cms/`.
+
+## Automatic deploys
+
+The `sc911-cms-spike` Worker is connected to this repository with Workers Builds (Worker → Settings → Builds):
+
+| Setting | Value |
+|---|---|
+| Production branch | `spike/emdash` (change to `main` when this merges) |
+| Root directory | `cms` |
+| Build command | `npm ci && npm run build` (the `prebuild` step reads `../site` and `../public`) |
+| Deploy command | `npx wrangler deploy` |
+| Preview builds | Off (preview URLs would bypass Access) |
+| Build variable | `NODE_VERSION=24` (Astro 7 needs Node 22.23 or newer) |
+| API token | Existing "Workers Builds - 2026-09-10" token |
+
+`EMDASH_ENCRYPTION_KEY` and `CF_ACCESS_AUDIENCE` are Worker secrets, not build variables; deploys keep them. The D1 database
+ID is committed in `cms/wrangler.jsonc`. Content lives in D1 and R2, so a deploy never changes content, and a new collection
+still has to be added to the live site separately (see "Trainings, other agencies' jobs and RFPs").
 
 ## Run it locally
 
