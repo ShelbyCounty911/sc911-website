@@ -1,62 +1,102 @@
 # SC911 website
 
-Approved public review prototype for the Shelby County 911 website migration. This baseline is a design reference, not a production release.
+The new public website for the Shelby County, TN Emergency Communications District, replacing the WordPress site at
+`shelbycounty911.org`. It is built on [EmDash](https://github.com/emdash-cms/emdash) (Cloudflare's CMS on Astro) and runs
+as a Cloudflare Worker. Staff edit meetings, jobs, trainings, RFPs and audits in the EmDash admin; everything else is
+approved page content in this repository.
 
-## Contents
+**Status:** not live yet. `shelbycounty911.org` is still WordPress. The launch plan is in PR #25
+(`docs/LAUNCH-RUNBOOK.md` once merged).
 
-- `public/`: approved bilingual mockup, public documents and media.
-- `wrangler.jsonc`: Cloudflare Worker configuration for `sc911-website`.
-- `docs/`: operational notes (baseline SHA-256 manifest and related records).
+## Sites
 
-The repository name `sc911-website` and public visibility were approved by the project owner on September 9, 2026 (owner-approved rename from the earlier review Worker name).
+| Site | Address | What it is |
+|---|---|---|
+| Test site (EmDash) | https://sc911-cms-spike.shelby-county-911-district.workers.dev/ | The new site, built from `main`. Public pages are open; the admin (`/_emdash/admin`) needs Microsoft sign-in through Cloudflare Access. Not indexed by search engines. |
+| Static review site | https://sc911-website.shelby-county-911-district.workers.dev/index.html | The original approved mockup (`public/`). Retired after launch. |
+| Production | https://shelbycounty911.org/ | Planned: a separate Worker `sc911-cms`, switched on with a Workers route (see the runbook). |
 
-## Boundaries
+## Repository layout
 
-Publish only to the existing `sc911-website` Worker during review. Do not change production domain routes or DNS. Keep previews non-indexable. Do not commit WordPress backups, SQL, credentials, private discovery files, or restricted records.
+| Path | Contents |
+|---|---|
+| `site/pages/` | The approved pages, English and `es-` Spanish pairs. **Edit page text here.** |
+| `site/shared/` | Shared header and footer (`en-`/`es-header.html`, `-footer.html`), used by every page on both sites. |
+| `public/` | Stylesheets, images, `documents/` (the 2006–2025 archive PDFs), `_redirects` (old WordPress addresses). `public/*.html` is generated: never edit it by hand. |
+| `cms/` | The EmDash site: `astro.config.mjs`, `wrangler.jsonc`, collections in `seed/seed.json`, page logic in `src/`, build scripts in `scripts/`. |
+| `cms/src/lib/` | How collections become page content: `meetings.js` + `render.js` (Meetings, Meeting records, audits), `listings.js` (Training, Careers, RFPs), `feeds.js` (RSS). |
+| `scripts/` | Root build and checks for the page files (`build-site.mjs`, `check-site.mjs`, `check-cleanup.mjs`). |
+| `docs/` | Decisions, runbook and notes (below). |
 
-The approved navigation is Using 9-1-1, Meetings, Training, Resources. Meetings shows upcoming meetings only. Resources links to the combined Meeting records and audits page. Training shows upcoming events only.
+## How changes get published
 
-The owner explicitly approved the staff page with names, job titles and business emails, superseding the original charter restriction for these fields. Personal phone numbers and organization-chart metadata are excluded.
+- **Content** (meetings, minutes, jobs, trainings, RFPs, audits, uploaded PDFs) is edited in the admin and is live as soon
+  as it is published. No code change. Staff instructions: the "SC911 Website: Staff How-To" doc (ask the project owner).
+- **Code and page changes** go through a pull request:
+  1. Branch from `main` (`content/…`, `cms/…`, `docs/…`).
+  2. Make the change, then run the checks below.
+  3. Open a PR. Required checks: `validate-site` and `Workers Builds: sc911-website`. `main` is protected, and branches
+     must be up to date with `main` before merging. Merge with **squash**.
+  4. Merging to `main` deploys automatically through Cloudflare Workers Builds: the test site (`sc911-cms-spike`, root
+     `cms/`) and the static review site (`sc911-website`). A deploy takes about 2 minutes and never changes content.
 
-## Owner-approved review Worker
+## Editing pages, header, footer and styles
 
-- Worker name: `sc911-website`
-- Review URL: https://sc911-website.shelby-county-911-district.workers.dev/index.html
-- Charter: review-only publishing. No production DNS or custom domain changes.
+1. Edit `site/pages/*.html` (both languages), `site/shared/*`, or `public/*.css`.
+2. `npm run build` regenerates `public/*.html`. Commit both the source and the generated files.
+3. `npm run check`, `node scripts/build-site.mjs --check` and `node scripts/check-cleanup.mjs` must pass. CI runs the same.
 
-## CI and Cloudflare publishing
+The EmDash site reads the same `site/` files at build time (`cms/scripts/build-static.mjs`), serves them at short URLs
+(`/meetings/`, Spanish under `/es/`, mapped in `cms/redirects/url-map.json`), and fills in the collection-driven parts at
+request time.
 
-### GitHub Actions (validation only)
+## Running the EmDash site locally
 
-- Workflow **Site checks** / job `validate-site` validates local links and assets, EN/ES page pairs, and preview `noindex` protections via `scripts/check-site.mjs` / `npm run check`.
-- GitHub Actions does **not** deploy. It remains validation-only.
+Requires the Node version in `cms/node_modules/astro` (22.23 or newer).
 
-### Cloudflare Workers Builds (publish)
+```bash
+cd cms
+npm install
+npm run dev
+```
 
-Workers Builds is the publish path for this repository:
+Open http://localhost:4321/. For the admin, open `/_emdash/api/setup/dev-bypass?redirect=/_emdash/admin` (local only;
+signs you in as a test Admin). Local data lives in `cms/.wrangler/state` and can be deleted to start fresh. On Windows,
+stopping the dev server can leave `workerd` processes that lock that folder; end them before deleting it.
 
-- Pushes to `main` run the deploy command: `npx wrangler deploy` (also available locally as `npm run deploy`).
-- Non-main / pull-request branches use the version command: `npx wrangler versions upload` (also available locally as `npm run preview`).
-- With `preview_urls` set to `true` in `wrangler.jsonc`, version uploads produce versioned preview URLs for PR review. Worker-level Preview URLs routing follows that Wrangler setting on the next `npx wrangler deploy` to `main` (versions upload alone does not replace the active production deployment).
-- Cloudflare posts pull-request comments with preview URLs when those URLs are available.
-- PR preview versions must not replace the active `main` deployment on the review URL above.
+`npm run build` in `cms/` checks a production build.
 
-Expected Workers Builds settings: Worker `sc911-website`, root `/`, build command empty or unused, production branch `main`, deploy command `npx wrangler deploy`, version command `npx wrangler versions upload`, builds for non-production branches enabled.
+## Things to know about EmDash here
 
-### Preview rebuild note
+- **Collections:** `meetings`, `trainings`, `psap_jobs` (other agencies' 9-1-1 center jobs; District jobs stay in
+  BambooHR), `rfps`, `audits`. Defined in `cms/seed/seed.json`.
+- **A seed only applies when a site is first set up.** A new collection or field must also be added to existing sites
+  (test, production) through the admin's Content types or the schema API.
+- **Times are Central wall-clock time.** EmDash stores datetimes without a time zone; the site converts them
+  (`centralWallToUtc` in `cms/src/lib/meetings.js`).
+- **Uploaded files** are public at `/files/<key>`; Access protects everything under `/_emdash`.
+- **RSS feeds:** `/feed/`, `/meetings/feed.xml`, `/training/feed.xml`, `/careers/feed.xml`, `/rfps/feed.xml`.
+- **Roles:** new sign-ins are Contributors (drafts only). Clerks are Editors. Admins manage users and content types.
+- **Secrets** (`EMDASH_ENCRYPTION_KEY`, `CF_ACCESS_AUDIENCE`) are Worker secrets, never in the repository. `.env.*` and
+  `.dev.vars` are git-ignored or must stay uncommitted.
 
-Rebuild requested 2026-09-10T19:47Z on this branch to re-verify the Cloudflare-returned Preview URL (check summary), EN/ES + sample assets, and `X-Robots-Tag: noindex`, without changing the active main review deployment.
+## Rules
 
-## Next implementation work
+- **Bilingual:** every page and public text has an English and a Spanish version.
+- **Approved decisions** are recorded in [`docs/design/DECISIONS.md`](docs/design/DECISIONS.md); change them only with the
+  project owner's approval, and record the change there. District naming follows
+  [`docs/DISTRICT-NAMING.md`](docs/DISTRICT-NAMING.md): "Shelby County, TN Emergency Communications District".
+- **No production DNS or route changes** without the project owner. The cutover is a Workers route, done during launch.
+- **Keep the test site non-indexed** (`noindex`) until launch.
+- **Never commit** WordPress backups, SQL dumps, credentials, tokens or restricted records. This repository is public.
+- **Accessibility:** WCAG 2.1 AA for pages; uploaded PDFs should be tagged.
 
-Move the approved design into the approved static framework with reusable components, schema-validated recurring content, automatic date lifecycle and English/Spanish parity. Existing HTML is the review baseline, not the final authoring system.
+## Docs
 
-Use short-lived branches and pull requests with protected `main` and required checks (`validate-site` and `Workers Builds: sc911-website`). Cloudflare handles publishing; GitHub Actions handles validation without a second deployment pipeline.
-
-Production release still requires content verification, accessibility checks including public documents, security and responsive testing, redirect validation, and documented deployment/rollback procedures. Approval of this mockup does not certify those release gates.
-
-## Editing static pages and shared layout
-
-Edit page content in `site/pages/`, headers and footers in `site/shared/`, and styles in `public/`. Run `npm run build` to regenerate the committed `public/*.html` files, then `npm run check`. Do not edit generated HTML directly. CI rejects generated pages that differ from their sources. This small Node build adds no browser JavaScript or framework.
-
-Obsolete prototype URLs are listed in `public/_redirects`; the original PDFs and media remain in place.
+| Doc | What it covers |
+|---|---|
+| [`docs/EMDASH-SPIKE.md`](docs/EMDASH-SPIKE.md) | How the EmDash site is built, roles, collections, records, feeds, deploys |
+| `docs/LAUNCH-RUNBOOK.md` (PR #25) | Launch decisions, gates, cutover, smoke test, rollback |
+| [`docs/design/DECISIONS.md`](docs/design/DECISIONS.md) | Owner-approved design and content decisions |
+| [`docs/DISTRICT-NAMING.md`](docs/DISTRICT-NAMING.md) | The District's formal name and where it is used |
+| `docs/design/*-MOCKUP.md` | Design history of individual pages |
