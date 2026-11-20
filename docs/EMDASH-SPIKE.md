@@ -115,7 +115,7 @@ The `sc911-cms-spike` Worker is connected to this repository with Workers Builds
 
 | Setting | Value |
 |---|---|
-| Production branch | `spike/emdash` (change to `main` when this merges) |
+| Production branch | `main` (was `spike/emdash` until #29 merged) |
 | Root directory | `cms` |
 | Build command | `npm ci && npm run build` (the `prebuild` step reads `../site` and `../public`) |
 | Deploy command | `npx wrangler deploy` |
