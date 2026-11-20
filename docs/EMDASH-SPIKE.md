@@ -4,8 +4,8 @@ Branch `spike/emdash`. The EmDash site is in `cms/` (EmDash 1.5.0, Astro 7, Clou
 as a separate test Worker, `sc911-cms-spike` (workers.dev only, behind Cloudflare Access). The review Worker is unchanged.
 
 This spike evaluates replacing the static site and the Lists + Power Automate publishing design
-(`CONTENT-PUBLISHING-DESIGN.md`, PR #27/#28) with EmDash. Before it merges, the owner decision
-"Stay on static HTML/CSS mockup — No Astro/CMS" in `design/DECISIONS.md` must be reversed.
+(`CONTENT-PUBLISHING-DESIGN.md`, PR #27/#28) with EmDash. **Owner approved the move on 2026-11-20**; `design/DECISIONS.md`
+records it and marks "Stay on static HTML/CSS mockup" as superseded.
 
 ## How it is built
 
@@ -75,14 +75,14 @@ by an Editor. The options:
 - **C.** A small plugin adds an approval step: the clerk is an Author, and publishing is blocked until an approver signs off
   (EmDash's `content:beforePublish` hook).
 
-**Leaning A (2026-11-20, pending owner sign-off).** Clerks are Editors; approval is by habit, and revision history records changes.
+**Chose A (2026-11-20).** Clerks are Editors; approval is by habit, and revision history records changes.
 New Access users still start as Contributor, so an Admin promotes each clerk to Editor under Users. Editors can also delete
 files and trash any entry, so the "never delete files" rule below is a habit too.
 
-## Still open before deciding
+## Still open
 
 - **Sign-in.** Done: Cloudflare Access with Entra in front of the whole spike Worker, verified 2026-11-19.
-- **Roles live test.** Done 2026-11-20 for Contributor (see Roles). Workflow leaning A (see Roles).
+- **Roles live test.** Done 2026-11-20 for Contributor (see Roles). Workflow: option A (see Roles).
 - **Deleting files** is permanent. Rule: never delete; add a new file instead. Under option A every clerk can delete, so this relies on training.
 - **Accessibility pass on the admin screens** staff will use.
 - **Remaining collections:** trainings, other agencies' jobs, RFPs. Then make the static pages editable one at a time.
