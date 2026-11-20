@@ -18,10 +18,10 @@ to EmDash on 2026-11-20 (`docs/design/DECISIONS.md`). The cutover itself still n
 
 | # | Decision | Recommendation |
 |---|---|---|
-| D1 | Production Worker: a new one, or promote the test Worker `sc911-cms-spike`? | **New Worker `sc911-cms`** with its own database and file storage. The test Worker stays as staging, so changes can be tried before they reach the public site. Content to re-enter at launch is small (meetings, three jobs). |
-| D2 | Who can sign in to the production admin? | An Access policy listing the staff who edit the site (or an Entra group, if one exists). Everyone else sees only the public site. |
-| D3 | How are uploaded files (agendas, minutes, RFP documents) served? | EmDash serves them from `/_emdash/api/media/file/…`. Keep that path **public** with an Access *Bypass* rule (below). The alternative is a public R2 bucket on its own domain, which means one more DNS name. |
-| D4 | What happens to the static review site `sc911-website.…workers.dev`? | Retire it after launch. The test Worker replaces it as the review site. |
+| D1 | Production Worker: a new one, or promote the test Worker `sc911-cms-spike`? | **Decided 2026-11-20: new Worker `sc911-cms`** with its own database and file storage. The test Worker stays as staging, so changes can be tried before they reach the public site. Content to re-enter at launch is small (meetings, three jobs). |
+| D2 | Who can sign in to the production admin? | **Decided 2026-11-20: Entra group `SEC-SSO-Employees-Users-Prod`.** Any member can sign in and arrives as Contributor (draft only); an Admin promotes clerks to Editor. Access needs the group's object ID and group claims enabled on the Entra login method. |
+| D3 | **Open.** How are uploaded files (agendas, minutes, RFP documents) served? | EmDash serves them from `/_emdash/api/media/file/…`. Keep that path **public** with an Access *Bypass* rule (below). The alternative is a public R2 bucket on its own domain, which means one more DNS name. |
+| D4 | What happens to the static review site `sc911-website.…workers.dev`? | **Decided 2026-11-20: retire it after launch.** The test Worker replaces it as the review site. |
 
 ## Sign-in on the public site
 
@@ -30,7 +30,7 @@ the admin:
 
 | Access application | Destination | Policy |
 |---|---|---|
-| SC911 site admin | `shelbycounty911.org/_emdash` (covers everything under it) **and** the production Worker's `workers.dev` hostname | Allow: site editors (D2), Entra ID only |
+| SC911 site admin | `shelbycounty911.org/_emdash` (covers everything under it) **and** the production Worker's `workers.dev` hostname | Allow: Entra group `SEC-SSO-Employees-Users-Prod` (D2), Entra ID only |
 | SC911 site files | `shelbycounty911.org/_emdash/api/media/file` | **Bypass: everyone** (the more specific path wins, so files stay public) |
 
 - Use **one** application for both admin destinations. EmDash checks one Access audience tag (`CF_ACCESS_AUDIENCE`), and each
@@ -63,7 +63,7 @@ build picks the production environment from `CLOUDFLARE_ENV=production`.
 |---|---|---|---|
 | 1 | Old WordPress URLs redirect (pages, posts, events, uploads); 269 rules in `cms/public/_redirects` | Dev | Done on test site |
 | 2 | Bilingual 404 page | Dev | Done on test site |
-| 3 | Decisions D1–D4 made | Owner | **Open** |
+| 3 | Decisions D1–D4 made | Owner | D1, D2, D4 decided 2026-11-20; **D3 open** |
 | 4 | Production-mode PR merged; test site still `noindex` | Dev | **Not started** |
 | 5 | Production Worker, D1, R2, Access apps (admin + file bypass) created; Admin signed in first | Owner (dashboard) | **Not started** |
 | 6 | Content entered on production: upcoming meetings, 9-1-1 center jobs, any trainings/RFPs; checked against the official calendar | Clerk + Owner | **Not started** |
