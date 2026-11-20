@@ -22,7 +22,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const PUBLIC = path.join(ROOT, 'public');
 
-const UNPAIRED_ALLOWED = new Set(['review.html']);
+const UNPAIRED_ALLOWED = new Set(['review.html', '404.html']);
 
 /** @type {string[]} */
 const failures = [];
@@ -141,7 +141,11 @@ function checkLinksAndAssets(htmlFiles) {
         } catch {
           // keep as-is
         }
-        targetFile = path.resolve(baseDir, decoded);
+        // Root-relative paths (and <base href="/">) resolve from the site root, i.e. public/
+        targetFile = decoded.startsWith('/')
+          ? path.join(PUBLIC, decoded)
+          : path.resolve(baseDir, decoded);
+        if (path.resolve(targetFile) === PUBLIC) continue;
         if (!targetFile.startsWith(PUBLIC + path.sep) && targetFile !== PUBLIC) {
           fail(`${relFile}: path escapes public/: ${raw}`);
           linkErrors++;
@@ -270,6 +274,62 @@ function checkPreviewIndexing(htmlFiles) {
   }
 }
 
+// After cutover the WordPress origin goes away, so any page that still links
+// to it (uploads, pages) would break. Copy the file into public/ instead.
+function checkNoWordPressLinks(htmlFiles) {
+  const re = /https?:\/\/(?:www\.)?shelbycounty911\.org\/(?:wp-content|wp-json|wp-admin|\?p=|event\/|events\/)[^"'\s<>]*/gi;
+  let count = 0;
+  for (const filePath of htmlFiles) {
+    const html = fs.readFileSync(filePath, 'utf8');
+    for (const m of html.matchAll(re)) {
+      fail(`${path.relative(PUBLIC, filePath)}: links to WordPress origin: ${m[0]}`);
+      count++;
+    }
+  }
+  if (!count) pass('No links to the WordPress origin');
+}
+
+// Every _redirects target must be an existing file in public/ (fragment ignored).
+function checkRedirectTargets() {
+  const file = path.join(PUBLIC, '_redirects');
+  if (!fs.existsSync(file)) return;
+  let bad = 0;
+  let total = 0;
+  // Cloudflare limits: 2,000 static + 100 dynamic rules. Any rule after the first
+  // wildcard/placeholder rule counts as dynamic, so wildcard rules belong at the end.
+  let dynamic = 0;
+  let firstDynamicLine = 0;
+  const seen = new Set();
+  for (const [i, line] of fs.readFileSync(file, 'utf8').split(/\r?\n/).entries()) {
+    const t = line.trim();
+    if (!t || t.startsWith('#')) continue;
+    const [from, to] = t.split(/\s+/);
+    total++;
+    if (!firstDynamicLine && /[*:]/.test(from)) firstDynamicLine = i + 1;
+    if (firstDynamicLine) dynamic++;
+    if (seen.has(from)) {
+      fail(`_redirects line ${i + 1}: duplicate source ${from}`);
+      bad++;
+    }
+    seen.add(from);
+    if (/^https?:/.test(to)) continue;
+    const target = path.join(PUBLIC, decodeURIComponent(to.split('#')[0]));
+    if (!fs.existsSync(target) || fs.statSync(target).isDirectory()) {
+      fail(`_redirects line ${i + 1}: target missing for ${from} -> ${to}`);
+      bad++;
+    }
+  }
+  if (dynamic > 100) {
+    fail(`_redirects: ${dynamic} rules count as dynamic (limit 100); move wildcard rules (first at line ${firstDynamicLine}) to the end`);
+    bad++;
+  }
+  if (total - dynamic > 2000) {
+    fail(`_redirects: ${total - dynamic} static rules (limit 2000)`);
+    bad++;
+  }
+  if (!bad) pass(`Redirects: all ${total} targets exist, no duplicate sources, ${dynamic}/100 dynamic`);
+}
+
 function main() {
   if (!fs.existsSync(PUBLIC)) {
     console.error('FAIL: public/ directory not found');
@@ -287,6 +347,8 @@ function main() {
   checkLinksAndAssets(htmlFiles);
   checkLanguagePairs(htmlFiles);
   checkPreviewIndexing(htmlFiles);
+  checkNoWordPressLinks(htmlFiles);
+  checkRedirectTargets();
 
   console.log('--- Summary ---');
   for (const msg of passes) console.log(`PASS: ${msg}`);

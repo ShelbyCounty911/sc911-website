@@ -1,0 +1,19 @@
+{
+  "_comment": "Review-site page file -> new EmDash URL. Spanish pages use the same path under /es/. Edit here, then run: node scripts/build-redirects.mjs",
+  "pages": {
+    "index.html": "/",
+    "using-911.html": "/using-911/",
+    "meetings.html": "/meetings/",
+    "past-meetings.html": "/records/",
+    "training.html": "/training/",
+    "resources.html": "/resources/",
+    "teacher-parent-resources.html": "/resources/teachers-and-parents/",
+    "board.html": "/board/",
+    "staff.html": "/staff/",
+    "history.html": "/history/",
+    "media.html": "/media/",
+    "careers.html": "/careers/",
+    "rfps.html": "/rfps/"
+  },
+  "spanishPrefix": "/es"
+}
