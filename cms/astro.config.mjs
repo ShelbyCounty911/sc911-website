@@ -21,7 +21,8 @@ export default defineConfig({
 		react(),
 		emdash({
 			database: d1({ binding: "DB", session: "auto", coalesce: true }),
-			storage: r2({ binding: "MEDIA" }),
+			// Uploaded files are public at /files/<key> (src/pages/files/[...key].ts), outside the Access-protected /_emdash path.
+			storage: r2({ binding: "MEDIA", publicUrl: "/files" }),
 			...(building && {
 				// CF_ACCESS_AUDIENCE (the Access application's AUD tag) is read at runtime from a Worker secret.
 				// New Access users start as Contributor (20): they can draft but not publish.
