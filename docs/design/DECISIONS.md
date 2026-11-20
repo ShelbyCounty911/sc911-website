@@ -16,7 +16,7 @@ Living record for interactive design refinement. Status values: **approved**, **
 
 | Decision | Notes |
 |----------|--------|
-| Top-level nav: Using 9-1-1, Meetings, Training, Resources | Live on `main` |
+| Top-level nav: Using 9-1-1, Meetings, Training, Resources, Dashboards | Dashboards added 2026-11-20 (owner request): links to the public Dashboard Launch Pad at `https://dashboard.shelbycounty911.org/launch#district` (Spanish label "Paneles"; menu items no longer wrap; the dashboards are English only). Not embedded: the dashboards are full-screen wallboards |
 | Meetings = upcoming only | Past meetings/minutes under Resources |
 | Financial audits = separate page under Resources | |
 | Training = upcoming training/conferences only | |
