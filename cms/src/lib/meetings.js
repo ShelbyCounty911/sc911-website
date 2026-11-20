@@ -1,6 +1,6 @@
 // Adapts EmDash "meetings" entries to the meeting objects render.js expects, and injects them
 // into the approved static Meetings / Meeting records pages.
-import { partition, renderUpcoming, renderRecord, groupByYear, bumpYearDescription, renderYearSection } from './render.js';
+import { partition, renderUpcoming, renderRecord, renderAudit, groupByYear, bumpYearDescription, renderYearSection } from './render.js';
 
 // EmDash's datetime field edits and stores wall-clock time with a "Z" suffix (the admin does not
 // convert to the editor's time zone). Staff type Central time, so read the stored clock fields as
@@ -56,9 +56,20 @@ export function entryToMeeting(entry, locals) {
   };
 }
 
-/** Rewrite the static page HTML with published meetings. kind: 'upcoming' | 'records'. */
-export function injectMeetings(html, meetings, kind, lang) {
-  if (!meetings.length) return new Response(html);
+/** An EmDash "audits" entry as { year, url, size } for renderAudit. */
+export function entryToAudit(entry, locals) {
+  const d = entry.data;
+  const year = Number(d.fiscal_year);
+  if (!Number.isInteger(year)) return null;
+  return { year, url: fileUrl(d.report, locals), size: d.report?.size ?? d.report?.meta?.size ?? null };
+}
+
+/**
+ * Rewrite the static page HTML with published meetings. kind: 'upcoming' | 'records'.
+ * On Records, audits (from entryToAudit) replace that year's static audit block, or add one.
+ */
+export function injectMeetings(html, meetings, kind, lang, audits = []) {
+  if (!meetings.length && !audits.length) return new Response(html);
   const { upcoming, past } = partition(meetings);
   const res = new Response(html);
   if (kind === 'upcoming') {
@@ -69,6 +80,7 @@ export function injectMeetings(html, meetings, kind, lang) {
       .transform(res);
   }
   const byYear = groupByYear(past);
+  const auditByYear = new Map(audits.filter(Boolean).map((a) => [a.year, a]));
   let firstYearSeen = false;
   let currentYear = null;
   let buf = '';
@@ -78,10 +90,19 @@ export function injectMeetings(html, meetings, kind, lang) {
         const year = Number((el.getAttribute('id') || '').replace('year-', ''));
         if (!firstYearSeen) {
           firstYearSeen = true;
-          const newer = [...byYear.entries()].filter(([y]) => y > year);
-          if (newer.length) el.before(newer.map(([y, ms]) => renderYearSection(y, ms, lang)).join(''), { html: true });
+          const years = new Set([...byYear.keys(), ...auditByYear.keys()].filter((y) => y > year));
+          const newer = [...years].sort((a, b) => b - a);
+          if (newer.length) {
+            el.before(newer.map((y) => renderYearSection(y, byYear.get(y) ?? [], lang, auditByYear.get(y))).join(''), { html: true });
+          }
         }
         currentYear = year;
+      },
+    })
+    .on('details.records-year section.year-audit', {
+      element(el) {
+        const audit = auditByYear.get(currentYear);
+        if (audit) el.replace(renderAudit(audit, lang), { html: true });
       },
     })
     .on('details.records-year .year-description', {

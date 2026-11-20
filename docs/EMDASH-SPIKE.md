@@ -39,6 +39,20 @@ deployed site separately (through the schema API or Content types), before or af
 Verified locally: sample entries in each collection render on the EN and ES pages. Past trainings, closed jobs and RFPs more
 than a year old are hidden. The admin edit forms open with every field editable.
 
+## Meeting records and audits
+
+`/records/` combines a fixed archive with EmDash entries:
+
+- **2006–2025** stay as approved page content (`site/pages/(es-)past-meetings.html`) with PDFs in `/documents/`.
+  Changing them takes a code change.
+- **2026 on** come from EmDash. A meeting moves from Meetings to Records when its end time passes, under its year. Board
+  meetings show "Minutes pending approval" until minutes are uploaded; Executive Committee meetings show no status (their
+  minutes are not posted here). The 2026 records were moved out of the fixed archive on 2026-11-20 with
+  `cms/scripts/import-2026-records.browser.js` (times from the WordPress event calendar; minutes PDFs copied into EmDash
+  media). **Run it once on the production site before launch** (Admin, browser console); it skips entries that exist.
+- **Audits** (`audits` collection: fiscal year + PDF). An audit entry shows in that fiscal year's section, replacing the
+  archive's "Not yet posted" block, or creates the year's section. FY2026 is entered as not yet posted.
+
 ## RSS feeds
 
 EmDash 1.5 has no feeds built in, so `cms/src/lib/feeds.js` builds RSS 2.0 from the same published entries as the pages.

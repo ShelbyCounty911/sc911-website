@@ -113,7 +113,11 @@ export function renderRecord(m, lang) {
   const t = T[lang];
   const minutes = m.files.find((f) => f.role === 'minutes');
   const agenda = m.files.find((f) => f.role === 'agenda');
-  const status = m.status === 'Canceled' ? t.recordStatus.canceled : minutes ? t.recordStatus.approved : t.recordStatus.pending;
+  // Executive Committee minutes are not posted in this collection, so only Board meetings show "pending".
+  const status = m.status === 'Canceled' ? t.recordStatus.canceled
+    : minutes ? t.recordStatus.approved
+    : m.body === 'Executive Committee' ? ''
+    : t.recordStatus.pending;
   const links = [
     minutes ? `<a href="${esc(minutes.url)}">${esc(t.minutesLink)}</a>` : '',
     agenda && m.status !== 'Canceled' ? `<a href="${esc(agenda.url)}">${esc(t.agendaLink)}</a>` : '',
@@ -122,8 +126,22 @@ export function renderRecord(m, lang) {
   return `<article class="meeting-record" id="meeting-${m.itemId}"><div>`
     + `<p class="meeting-type">${esc(bodyLabel(m, lang))}</p>`
     + `<h3>${esc(formatDate(m.start, lang))}</h3>`
-    + `<p class="record-status">${esc(status)}</p>`
+    + (status ? `<p class="record-status">${esc(status)}</p>` : '')
     + `</div>${links ? `<div class="record-links">${links}</div>` : ''}</article>`;
+}
+
+/**
+ * The fiscal-year audit block, matching the static .year-audit markup.
+ * audit: { year, url, size } (url null = not yet posted).
+ */
+export function renderAudit(audit, lang) {
+  const t = T[lang];
+  const kb = audit.size ? (audit.size >= 1048576 ? `${(audit.size / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(audit.size / 1024))} KB`) : null;
+  const action = audit.url
+    ? `<a href="${esc(audit.url)}">${esc(t.auditLink)}${kb ? ` <span class="file-meta">${esc(t.fileMeta(kb))}</span>` : ''}</a>`
+    : `<p class="audit-pending">${esc(t.auditPending)}</p>`;
+  return `<section class="year-audit"><div><p class="meeting-type">${esc(t.auditType)}</p>`
+    + `<h3>${esc(t.auditTitle(audit.year))}</h3><p>${esc(t.auditPeriod(audit.year))}</p></div>${action}</section>`;
 }
 
 /** Group past meetings by Central-time year, newest year first. */
@@ -152,16 +170,19 @@ export function bumpYearDescription(text, meetings, lang) {
   return parts.join(' · ');
 }
 
-/** A complete year section for a year the static archive doesn't have yet. */
-export function renderYearSection(year, meetings, lang) {
+/** A complete year section for a year the static archive doesn't have (meetings and/or that year's audit). */
+export function renderYearSection(year, meetings, lang, audit = null) {
   const t = T[lang];
   const recordings = meetings.filter((m) => m.recordingUrl).length;
-  const desc = t.yearRecords(meetings.length) + (recordings ? ` · ${t.yearRecordings(recordings)}` : '');
+  const desc = meetings.length
+    ? t.yearRecords(meetings.length) + (recordings ? ` · ${t.yearRecordings(recordings)}` : '')
+    : t.auditTitle(year);
   return `<details class="records-year" id="year-${year}" open><summary>`
     + `<span class="year-number">${year}</span><span class="year-description">${esc(desc)}</span>`
     + `<span class="year-toggle" aria-hidden="true"></span></summary>`
     + `<div class="year-body"><div class="year-heading"><h2>${esc(t.meetingsHeading)}</h2>`
     + `<a href="#year-${year}">${esc(t.yearLink(year))}</a></div>`
     + meetings.map((m) => renderRecord(m, lang)).join('')
+    + (audit ? renderAudit(audit, lang) : '')
     + `</div></details>`;
 }
