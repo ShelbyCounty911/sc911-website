@@ -57,6 +57,8 @@ for (const name of fs.readdirSync(path.join(site, 'pages')).filter((n) => n.ends
   // The "REVIEW SITE" banner is for the public static review site; the EmDash site is behind sign-in until
   // launch and the banner must not reach production, so it is removed here (owner request 2026-11-20).
   html = html.replace(/<div class="review">[^<]*<\/div>/, '');
+  // Review-only title endings become the District's name, like the pages that already use it.
+  html = html.replace(/<title>([^<]*?) \| SC911 (?:Design|Content) Review<\/title>/, `<title>$1 | ${SITE_NAME}</title>`);
   html = html.replace(/\b(href|src)="([^"]*)"/g, (_, attr, v) => `${attr}="${rewriteUrl(v, name)}"`);
   const key = base === '404.html' ? (es ? 'es-404' : '404') : urlFor[name];
   if (!key) throw new Error(`${name} has no URL in redirects/url-map.json`);
