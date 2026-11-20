@@ -1,7 +1,7 @@
 # EmDash spike (November 19, 2026)
 
 Branch `spike/emdash`. The EmDash site is in `cms/` (EmDash 1.5.0, Astro 7, Cloudflare template). It is deployed
-as a separate test Worker, `sc911-cms-spike` (workers.dev only, behind Cloudflare Access). The review Worker is unchanged.
+as a separate test Worker, `sc911-cms-spike` (workers.dev only). Since 2026-11-20 its public pages are open; Cloudflare Access protects only `/_emdash`. The review Worker is unchanged.
 
 This spike evaluates replacing the static site and the Lists + Power Automate publishing design
 (`CONTENT-PUBLISHING-DESIGN.md`, PR #27/#28) with EmDash. **Owner approved the move on 2026-11-20**; `design/DECISIONS.md`
@@ -131,7 +131,7 @@ files and trash any entry, so the "never delete files" rule below is a habit too
 
 ## Still open
 
-- **Sign-in.** Done: Cloudflare Access with Entra in front of the whole spike Worker, verified 2026-11-19.
+- **Sign-in.** Done: Cloudflare Access with Entra, verified 2026-11-19. Narrowed to `/_emdash` on 2026-11-20 so the public pages are open (as planned for production).
 - **Roles live test.** Done 2026-11-20 for Contributor (see Roles). Workflow: option A (see Roles).
 - **Deleting files** is permanent. Rule: never delete; add a new file instead. Under option A every clerk can delete, so this relies on training.
 - **Accessibility pass on the admin screens** staff will use.
