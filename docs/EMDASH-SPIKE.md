@@ -1,7 +1,7 @@
 # EmDash spike (November 19, 2026)
 
-Branch `spike/emdash`. The EmDash site is in `cms/` (EmDash 1.5.0, Astro 7, Cloudflare template). It was tested
-locally only. Nothing has been deployed, and the review Worker is unchanged.
+Branch `spike/emdash`. The EmDash site is in `cms/` (EmDash 1.5.0, Astro 7, Cloudflare template). It is deployed
+as a separate test Worker, `sc911-cms-spike` (workers.dev only, behind Cloudflare Access). The review Worker is unchanged.
 
 This spike evaluates replacing the static site and the Lists + Power Automate publishing design
 (`CONTENT-PUBLISHING-DESIGN.md`, PR #27/#28) with EmDash. Before it merges, the owner decision
@@ -44,7 +44,14 @@ This spike evaluates replacing the static site and the Lists + Power Automate pu
 
 ## Roles (from EmDash 1.5 permission rules)
 
-Read from `@emdash-cms/auth` and `emdash/dist/authorize-*.mjs`. Live check with a second account still pending.
+Read from `@emdash-cms/auth` and `emdash/dist/authorize-*.mjs`, then checked live for Contributor.
+
+**Live check, 2026-11-20** (second Entra account, through Access): the account was created as Contributor (20) on first
+sign-in. It saved a draft meeting. Publishing that draft was refused ("Failed to publish, 1 of 1 could not be published"). The draft
+stayed unpublished, and the public EN and ES Meetings pages did not change. The admin still shows Publish and Move to trash buttons
+to a Contributor and refuses them only when clicked, so expect staff to see those errors. Opening a published meeting shows
+every field greyed out (read-only), and the meeting's stored version did not change. Move to trash on a published meeting
+was refused, and the meeting stayed published. All four results match the table below.
 
 | Action | Contributor (20) | Author (30) | Editor (40) | Admin (50) |
 |---|---|---|---|---|
@@ -71,7 +78,7 @@ by an Editor. The options:
 ## Still open before deciding
 
 - **Sign-in.** Done: Cloudflare Access with Entra in front of the whole spike Worker, verified 2026-11-19.
-- **Roles live test** with a second Entra account (new Access users start as Contributor).
+- **Roles live test.** Done 2026-11-20 for Contributor (see Roles). The workflow choice (A, B or C) is still open.
 - **Deleting files** is permanent. Rule: never delete; add a new file instead. Restrict deletes to Editors.
 - **Accessibility pass on the admin screens** staff will use.
 - **Remaining collections:** trainings, other agencies' jobs, RFPs. Then make the static pages editable one at a time.
