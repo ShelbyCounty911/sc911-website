@@ -54,6 +54,9 @@ for (const name of fs.readdirSync(path.join(site, 'pages')).filter((n) => n.ends
   const footer = fs.readFileSync(path.join(site, 'shared', `${es ? 'es' : 'en'}-footer.html`), 'utf8');
   let html = fs.readFileSync(path.join(site, 'pages', name), 'utf8').replace('{{HEADER}}', header).replace('{{FOOTER}}', footer);
   html = html.replace(/<base [^>]*>/i, '');
+  // The "REVIEW SITE" banner is for the public static review site; the EmDash site is behind sign-in until
+  // launch and the banner must not reach production, so it is removed here (owner request 2026-11-20).
+  html = html.replace(/<div class="review">[^<]*<\/div>/, '');
   html = html.replace(/\b(href|src)="([^"]*)"/g, (_, attr, v) => `${attr}="${rewriteUrl(v, name)}"`);
   const key = base === '404.html' ? (es ? 'es-404' : '404') : urlFor[name];
   if (!key) throw new Error(`${name} has no URL in redirects/url-map.json`);
