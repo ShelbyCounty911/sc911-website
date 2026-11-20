@@ -17,6 +17,14 @@ for (const [file, url] of Object.entries(map.pages)) {
 }
 
 const SECTIONS = ['using-911.html', 'meetings.html', 'training.html', 'resources.html'];
+const SITE_NAME = 'Shelby County, TN Emergency Communications District';
+const FEED_FOR = {
+  'meetings.html': ['/meetings/feed.xml', 'Meetings'],
+  'past-meetings.html': ['/meetings/feed.xml', 'Meetings'],
+  'training.html': ['/training/feed.xml', 'Training and conferences'],
+  'careers.html': ['/careers/feed.xml', 'Jobs at 9-1-1 centers'],
+  'rfps.html': ['/rfps/feed.xml', 'RFPs'],
+};
 const sectionOf = (base) =>
   base === 'index.html' || base === '404.html' ? null : SECTIONS.includes(base) ? base : 'resources.html';
 
@@ -49,6 +57,12 @@ for (const name of fs.readdirSync(path.join(site, 'pages')).filter((n) => n.ends
   html = html.replace(/\b(href|src)="([^"]*)"/g, (_, attr, v) => `${attr}="${rewriteUrl(v, name)}"`);
   const key = base === '404.html' ? (es ? 'es-404' : '404') : urlFor[name];
   if (!key) throw new Error(`${name} has no URL in redirects/url-map.json`);
+  // RSS autodiscovery (feeds are English; see src/lib/feeds.js): the page's own feed, then the site feed.
+  const feeds = [FEED_FOR[base], ['/feed/', 'Updates']].filter(Boolean);
+  html = html.replace(
+    '</head>',
+    feeds.map(([href, title]) => `<link rel="alternate" type="application/rss+xml" title="${SITE_NAME}: ${title}" href="${href}">`).join('') + '</head>',
+  );
   pages[key] = { lang: es ? 'es' : 'en', source: name, html };
 }
 

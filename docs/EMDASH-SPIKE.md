@@ -39,6 +39,22 @@ deployed site separately (through the schema API or Content types), before or af
 Verified locally: sample entries in each collection render on the EN and ES pages. Past trainings, closed jobs and RFPs more
 than a year old are hidden. The admin edit forms open with every field editable.
 
+## RSS feeds
+
+EmDash 1.5 has no feeds built in, so `cms/src/lib/feeds.js` builds RSS 2.0 from the same published entries as the pages.
+Feeds are in English and list the same items the pages show.
+
+| Feed | Items |
+|---|---|
+| `/meetings/feed.xml` | Meetings from the past 12 months and upcoming, with agenda, minutes and recording links |
+| `/training/feed.xml` | Upcoming trainings and conferences |
+| `/careers/feed.xml` | 9-1-1 center jobs (other agencies) still open |
+| `/rfps/feed.xml` | Open RFPs and those closed in the last 12 months, with documents |
+| `/feed/` | All of the above, newest 50 (the old WordPress feed address; its redirect to the home page was removed) |
+
+Each item's date is the entry's last edit, so readers sort an updated meeting (agenda or minutes added) to the top. Pages link
+their feed in `<head>` so browsers and feed readers find it.
+
 ## Verified locally
 
 | Check | Result |
