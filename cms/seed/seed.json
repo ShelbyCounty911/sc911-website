@@ -422,6 +422,34 @@
           "type": "file"
         }
       ]
+    },
+    {
+      "slug": "audits",
+      "label": "Audits",
+      "labelSingular": "Audit",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Internal title (e.g. Audit FY2026)",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "fiscal_year",
+          "label": "Fiscal year (the year it ends June 30, e.g. 2026). Shown in that year on Meeting records",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "slug": "report",
+          "label": "Audit report (PDF). Leave empty to show \"Not yet posted\"",
+          "type": "file"
+        }
+      ]
     }
   ],
   "content": {

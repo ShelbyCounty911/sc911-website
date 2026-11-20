@@ -4,7 +4,7 @@
 // read, the approved static page is served unchanged.
 import { getEmDashCollection } from "emdash";
 import pages from "../generated/static-pages.json";
-import { entryToMeeting, injectMeetings } from "../lib/meetings.js";
+import { entryToMeeting, entryToAudit, injectMeetings } from "../lib/meetings.js";
 import { injectTrainings, injectJobs, injectRfps } from "../lib/listings.js";
 
 const raw = Astro.params.path ?? "";
@@ -22,7 +22,12 @@ if (raw !== "" && !Astro.url.pathname.endsWith("/")) {
 const path = key.replace(/^\/es\//, "/");
 const DYNAMIC = {
 	"/meetings/": { collection: "meetings", inject: (html, entries, lang, locals) => injectMeetings(html, entries.map((e) => entryToMeeting(e, locals)), "upcoming", lang) },
-	"/records/": { collection: "meetings", inject: (html, entries, lang, locals) => injectMeetings(html, entries.map((e) => entryToMeeting(e, locals)), "records", lang) },
+	"/records/": {
+		collection: "meetings",
+		also: "audits",
+		inject: (html, entries, lang, locals, audits) =>
+			injectMeetings(html, entries.map((e) => entryToMeeting(e, locals)), "records", lang, audits.map((e) => entryToAudit(e, locals))),
+	},
 	"/training/": { collection: "trainings", inject: (html, entries, lang) => injectTrainings(html, entries, lang) },
 	"/careers/": { collection: "psap_jobs", inject: (html, entries, lang) => injectJobs(html, entries, lang) },
 	"/rfps/": { collection: "rfps", inject: (html, entries, lang, locals) => injectRfps(html, entries, lang, locals) },
@@ -33,12 +38,14 @@ if (!dynamic) {
 }
 
 let entries;
+let extra = [];
 try {
 	({ entries } = await getEmDashCollection(dynamic.collection, { status: "published", limit: 1000 }));
+	if (dynamic.also) ({ entries: extra } = await getEmDashCollection(dynamic.also, { status: "published", limit: 1000 }));
 } catch (err) {
 	console.error(`${dynamic.collection} read failed; serving static page`, err);
 	return new Response(page.html, { headers });
 }
-const res = dynamic.inject(page.html, entries, page.lang, Astro.locals);
+const res = dynamic.inject(page.html, entries, page.lang, Astro.locals, extra);
 return new Response(res.body, { headers: { ...headers, "Cache-Control": "public, max-age=0, must-revalidate" } });
 ---
