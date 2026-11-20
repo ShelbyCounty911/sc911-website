@@ -96,7 +96,7 @@ const httpsOnly = (u) => (typeof u === 'string' && /^https:\/\//i.test(u) ? u : 
 const iso = (v) => (v instanceof Date ? v.toISOString() : v ? String(v) : null);
 const slugId = (prefix, entry) => `${prefix}-${String(entry.id).replace(/[^a-z0-9-]/gi, '-').toLowerCase()}`;
 
-function fileUrl(file, locals) {
+export function fileUrl(file, locals) {
   if (!file) return null;
   const key = typeof file?.meta?.storageKey === 'string' ? file.meta.storageKey : undefined;
   if (key) return locals.emdash?.getPublicMediaUrl?.(key) ?? `/_emdash/api/media/file/${key}`;

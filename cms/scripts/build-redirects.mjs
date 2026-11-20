@@ -38,10 +38,18 @@ const add = (from, to, status) => {
   (from.includes('*') ? wild : fixed).push(`${from} ${to} ${status}`);
 };
 
+// Paths the EmDash site now serves itself: the old WordPress feed address is the site-wide RSS feed.
+// null = drop the WordPress rule; a string = new target.
+const SERVED = { '/feed/': null, '/feed': '/feed/' };
+
 for (const line of source.split(/\r?\n/)) {
   const t = line.trim();
   if (!t || t.startsWith('#')) continue;
   const [from, to, status = '301'] = t.split(/\s+/);
+  if (from in SERVED) {
+    if (SERVED[from]) add(from, SERVED[from], status);
+    continue;
+  }
   add(from, retarget(to), status);
 }
 // Review-site addresses (shared during design review) -> new URLs.
