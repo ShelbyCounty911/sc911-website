@@ -134,6 +134,294 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "slug": "trainings",
+      "label": "Trainings",
+      "labelSingular": "Training",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title (English)",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "title_es",
+          "label": "Title (Spanish; blank = English title)",
+          "type": "string"
+        },
+        {
+          "slug": "kind",
+          "label": "Type",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": [
+              "Training class",
+              "Conference"
+            ]
+          }
+        },
+        {
+          "slug": "training_status",
+          "label": "Status",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": [
+              "Scheduled",
+              "Canceled"
+            ]
+          }
+        },
+        {
+          "slug": "organizer",
+          "label": "Organizer (e.g. Tennessee Emergency Number Association)",
+          "type": "string"
+        },
+        {
+          "slug": "start",
+          "label": "Start (Central time)",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "end",
+          "label": "End (Central time). Leaves the page after this time",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "location",
+          "label": "Location (one line per address line)",
+          "type": "text"
+        },
+        {
+          "slug": "registration_url",
+          "label": "Registration or event information link (https)",
+          "type": "url"
+        },
+        {
+          "slug": "description_en",
+          "label": "Description (English)",
+          "type": "text"
+        },
+        {
+          "slug": "description_es",
+          "label": "Description (Spanish)",
+          "type": "text"
+        },
+        {
+          "slug": "objectives_en",
+          "label": "What you will learn (English, one per line)",
+          "type": "text"
+        },
+        {
+          "slug": "objectives_es",
+          "label": "What you will learn (Spanish, one per line)",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "slug": "psap_jobs",
+      "label": "9-1-1 center jobs (other agencies)",
+      "labelSingular": "9-1-1 center job",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Position title (as the agency posts it, English)",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "agency",
+          "label": "Hiring agency (not the District)",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": [
+              "Memphis Police Department",
+              "Memphis Fire Services",
+              "Shelby County Sheriff's Office"
+            ]
+          }
+        },
+        {
+          "slug": "pay_en",
+          "label": "Pay (English, e.g. $56,190 / year)",
+          "type": "string"
+        },
+        {
+          "slug": "pay_es",
+          "label": "Pay (Spanish, e.g. $56,190 al año)",
+          "type": "string"
+        },
+        {
+          "slug": "employment_type",
+          "label": "Employment type",
+          "type": "select",
+          "required": false,
+          "validation": {
+            "options": [
+              "Full time",
+              "Part time"
+            ]
+          }
+        },
+        {
+          "slug": "location",
+          "label": "Work location (e.g. Memphis, TN)",
+          "type": "string"
+        },
+        {
+          "slug": "summary_en",
+          "label": "Summary (English)",
+          "type": "text"
+        },
+        {
+          "slug": "summary_es",
+          "label": "Summary (Spanish)",
+          "type": "text"
+        },
+        {
+          "slug": "apply_url",
+          "label": "Apply link (agency's own posting, https)",
+          "type": "url",
+          "required": true
+        },
+        {
+          "slug": "info_url",
+          "label": "More information link (https, optional)",
+          "type": "url"
+        },
+        {
+          "slug": "info_label_en",
+          "label": "More information button text (English; blank = More information)",
+          "type": "string"
+        },
+        {
+          "slug": "info_label_es",
+          "label": "More information button text (Spanish; blank = Más información)",
+          "type": "string"
+        },
+        {
+          "slug": "closing",
+          "label": "Closing date (leaves the page the day after). Blank = no closing date",
+          "type": "datetime"
+        },
+        {
+          "slug": "continuous",
+          "label": "Continuous posting (shown when there is no closing date)",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "slug": "rfps",
+      "label": "RFPs",
+      "labelSingular": "RFP",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title (English)",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "title_es",
+          "label": "Title (Spanish; blank = English title)",
+          "type": "string"
+        },
+        {
+          "slug": "number",
+          "label": "Solicitation number (e.g. RFP 2026-01)",
+          "type": "string"
+        },
+        {
+          "slug": "rfp_status",
+          "label": "Status",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": [
+              "Open",
+              "Closed",
+              "Awarded",
+              "Canceled"
+            ]
+          }
+        },
+        {
+          "slug": "issued",
+          "label": "Issue date (Central time)",
+          "type": "datetime"
+        },
+        {
+          "slug": "questions_due",
+          "label": "Questions due (Central time)",
+          "type": "datetime"
+        },
+        {
+          "slug": "due",
+          "label": "Proposals due (Central time)",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "summary_en",
+          "label": "Summary (English)",
+          "type": "text"
+        },
+        {
+          "slug": "summary_es",
+          "label": "Summary (Spanish)",
+          "type": "text"
+        },
+        {
+          "slug": "contact",
+          "label": "Procurement contact (name, email)",
+          "type": "text"
+        },
+        {
+          "slug": "solicitation",
+          "label": "Solicitation document (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "addendum_1",
+          "label": "Addendum 1 (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "addendum_2",
+          "label": "Addendum 2 (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "addendum_3",
+          "label": "Addendum 3 (PDF)",
+          "type": "file"
+        },
+        {
+          "slug": "award_notice",
+          "label": "Award notice (PDF)",
+          "type": "file"
+        }
+      ]
     }
   ],
   "content": {

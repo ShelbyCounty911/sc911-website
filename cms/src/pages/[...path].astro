@@ -1,9 +1,11 @@
 ---
 // Serves the approved pages (generated from ../site by scripts/build-static.mjs) at their new URLs.
-// Meetings and Meeting records pages are filled from the EmDash "meetings" collection.
+// Pages backed by an EmDash collection are filled in at request time; if the collection can't be
+// read, the approved static page is served unchanged.
 import { getEmDashCollection } from "emdash";
 import pages from "../generated/static-pages.json";
 import { entryToMeeting, injectMeetings } from "../lib/meetings.js";
+import { injectTrainings, injectJobs, injectRfps } from "../lib/listings.js";
 
 const raw = Astro.params.path ?? "";
 const key = raw === "" ? "/" : `/${raw.replace(/\/+$/, "")}/`;
@@ -17,18 +19,26 @@ if (raw !== "" && !Astro.url.pathname.endsWith("/")) {
 	return Astro.redirect(`${key}${Astro.url.search}`, 301);
 }
 
-const kind = /^\/(es\/)?meetings\/$/.test(key) ? "upcoming" : /^\/(es\/)?records\/$/.test(key) ? "records" : null;
-if (!kind) {
+const path = key.replace(/^\/es\//, "/");
+const DYNAMIC = {
+	"/meetings/": { collection: "meetings", inject: (html, entries, lang, locals) => injectMeetings(html, entries.map((e) => entryToMeeting(e, locals)), "upcoming", lang) },
+	"/records/": { collection: "meetings", inject: (html, entries, lang, locals) => injectMeetings(html, entries.map((e) => entryToMeeting(e, locals)), "records", lang) },
+	"/training/": { collection: "trainings", inject: (html, entries, lang) => injectTrainings(html, entries, lang) },
+	"/careers/": { collection: "psap_jobs", inject: (html, entries, lang) => injectJobs(html, entries, lang) },
+	"/rfps/": { collection: "rfps", inject: (html, entries, lang, locals) => injectRfps(html, entries, lang, locals) },
+};
+const dynamic = DYNAMIC[path];
+if (!dynamic) {
 	return new Response(page.html, { headers });
 }
 
-let meetings = [];
+let entries;
 try {
-	const { entries } = await getEmDashCollection("meetings", { status: "published", limit: 1000 });
-	meetings = entries.map((e) => entryToMeeting(e, Astro.locals));
+	({ entries } = await getEmDashCollection(dynamic.collection, { status: "published", limit: 1000 }));
 } catch (err) {
-	console.error("meetings read failed; serving static page", err);
+	console.error(`${dynamic.collection} read failed; serving static page`, err);
+	return new Response(page.html, { headers });
 }
-const res = injectMeetings(page.html, meetings, kind, page.lang);
+const res = dynamic.inject(page.html, entries, page.lang, Astro.locals);
 return new Response(res.body, { headers: { ...headers, "Cache-Control": "public, max-age=0, must-revalidate" } });
 ---

@@ -19,6 +19,26 @@ records it and marks "Stay on static HTML/CSS mockup" as superseded.
 - **Meetings** are an EmDash collection (`cms/seed/seed.json`). The Meetings and Meeting records pages render them with the
   card code from PR #28 (`cms/src/lib/render.js`, `format.js`, `strings.js`).
 
+## Trainings, other agencies' jobs and RFPs
+
+Three more collections in `cms/seed/seed.json`, rendered by `cms/src/lib/listings.js` into the approved pages. All dates are
+Central time, like meetings. If a collection can't be read, the approved static page is served unchanged.
+
+| Collection | Page | What shows |
+|---|---|---|
+| Trainings (`trainings`) | `/training/` | Upcoming only; each leaves the page after its end time. Cards use the approved Training design: classes show the time, conferences show dates only. Canceled events stay listed, marked canceled. With none upcoming, the approved "No upcoming events" panel shows. |
+| 9-1-1 center jobs (`psap_jobs`) | `/careers/`, "Jobs at 9-1-1 centers" only | Other agencies' jobs. District jobs stay in the BambooHR embed and are not touched. A job leaves the page the day after its closing date. The card shows "Apply by", "Continuous posting" or "Posted". "Last reviewed" is the latest edit. The "These are not District jobs" notice stays. |
+| RFPs (`rfps`) | `/rfps/` | "Open" (status Open, due date not passed) and "Recently closed" (due in the last 12 months). Solicitation, up to three addenda and an award notice as files. |
+
+Spanish pages use the Spanish fields when filled in, otherwise English (marked `lang="en"`). Job titles stay in English.
+The agency list holds the three agencies posting today; an Admin adds more under Content types.
+
+**Deployed site.** A seed only applies when a site is first set up, so the three collections have to be added to the
+deployed site separately (through the schema API or Content types), before or after deploying the code.
+
+Verified locally: sample entries in each collection render on the EN and ES pages. Past trainings, closed jobs and RFPs more
+than a year old are hidden. The admin edit forms open with every field editable.
+
 ## Verified locally
 
 | Check | Result |
@@ -85,7 +105,7 @@ files and trash any entry, so the "never delete files" rule below is a habit too
 - **Roles live test.** Done 2026-11-20 for Contributor (see Roles). Workflow: option A (see Roles).
 - **Deleting files** is permanent. Rule: never delete; add a new file instead. Under option A every clerk can delete, so this relies on training.
 - **Accessibility pass on the admin screens** staff will use.
-- **Remaining collections:** trainings, other agencies' jobs, RFPs. Then make the static pages editable one at a time.
+- **Remaining collections.** Built 2026-11-20 (see below). Next: make the static pages editable one at a time.
 - **CI.** Workers Builds needs a build command (`cd cms && npm ci && npm run build`) and a deploy from `cms/`. The site checks should
   point at the built output.
 
