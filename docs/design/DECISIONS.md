@@ -24,7 +24,8 @@ Living record for interactive design refinement. Status values: **approved**, **
 | Careers and RFPs = separate pages | |
 | Header: district seal + wordmark | |
 | Footer: “When Life Is on the Line” logo left; contact right on wide screens | |
-| Stay on static HTML/CSS mockup | No Astro/CMS/forms/trackers/external fonts |
+| ~~Stay on static HTML/CSS mockup~~ | **Superseded 2026-11-20** by the EmDash decision below. Still no forms, trackers or external fonts |
+| Move the site to EmDash (Cloudflare CMS on Astro) | Approved 2026-11-20. New short URLs (`/meetings/`, Spanish under `/es/`), with old WordPress addresses redirected. Approved pages kept as-is at first. Staff sign in through Cloudflare Access (Entra). Workflow: clerks are Editors, approval by habit. No notice-date lock (legal notice runs in local newspapers). Details in `docs/EMDASH-SPIKE.md`, PR #29 |
 | Home: remove Text-to-911 availability sentence | Requested 2026-09-10 — EN/ES home only |
 | Home: say “call or text 9-1-1” instead of “call 9-1-1” | Utility bar + feature eyebrow on EN/ES home |
 | Careers: BambooHR job-board embed | Owner-requested exception to “no new services”; EN/ES careers pages load `shelbycounty911.bamboohr.com/js/embed.js` |

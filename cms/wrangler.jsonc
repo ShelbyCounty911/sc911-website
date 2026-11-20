@@ -1,0 +1,49 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "sc911-cms-spike",
+	"account_id": "fd14180882e36accc0cf6a3c42d3c391",
+	"main": "./src/worker.ts",
+	// Spike: only the workers.dev hostname, which Cloudflare Access protects. No preview URLs (they would bypass Access).
+	"workers_dev": true,
+	"preview_urls": false,
+	"compatibility_date": "2026-02-24",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "sc911-cms-spike",
+			"database_id": "c6c1d43d-dacd-406a-9ed7-c812cc3c8188",
+		},
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			"bucket_name": "sc911-cms-spike-media",
+		},
+	],
+	// Co-editing rooms, one Durable Object per entry being edited
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "EMDASH_ROOMS",
+				"class_name": "EmDashRoom"
+			}
+		],
+	},
+	"exports": {
+		"EmDashRoom": {
+			"type": "durable-object",
+			"storage": "sqlite"
+		},
+	},
+	// Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:
+	// "worker_loaders": [{ "binding": "LOADER" }],
+	// General maintenance cron trigger
+	"triggers": {
+		"crons": [
+			"* * * * *"
+		],
+	},
+}
