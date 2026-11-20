@@ -39,8 +39,8 @@ This spike evaluates replacing the static site and the Lists + Power Automate pu
 2. **File lists.** A repeater containing file fields makes the whole entry read-only ("field types this version does not
    support"). Replaced with five fixed "Supporting material" file fields.
 3. **Notice-posted date.** The site uses EmDash's publication date. Changing it requires `content:publish_any` (Editor and up), so
-   Contributors and Authors can't, but the approver can. For the Open Meetings Act record it still has to be locked: a small plugin
-   that rejects changes after first publish, or a separate notice-date field. Still open.
+   Contributors and Authors can't, but Editors can. **Decided 2026-11-20: no lock.** Legal notice is published in at least two
+   local newspapers, so the website date is a courtesy, not the notice of record. Rule for editors: don't change the publication date.
 
 ## Roles (from EmDash 1.5 permission rules)
 
@@ -75,11 +75,15 @@ by an Editor. The options:
 - **C.** A small plugin adds an approval step: the clerk is an Author, and publishing is blocked until an approver signs off
   (EmDash's `content:beforePublish` hook).
 
+**Leaning A (2026-11-20, pending owner sign-off).** Clerks are Editors; approval is by habit, and revision history records changes.
+New Access users still start as Contributor, so an Admin promotes each clerk to Editor under Users. Editors can also delete
+files and trash any entry, so the "never delete files" rule below is a habit too.
+
 ## Still open before deciding
 
 - **Sign-in.** Done: Cloudflare Access with Entra in front of the whole spike Worker, verified 2026-11-19.
-- **Roles live test.** Done 2026-11-20 for Contributor (see Roles). The workflow choice (A, B or C) is still open.
-- **Deleting files** is permanent. Rule: never delete; add a new file instead. Restrict deletes to Editors.
+- **Roles live test.** Done 2026-11-20 for Contributor (see Roles). Workflow leaning A (see Roles).
+- **Deleting files** is permanent. Rule: never delete; add a new file instead. Under option A every clerk can delete, so this relies on training.
 - **Accessibility pass on the admin screens** staff will use.
 - **Remaining collections:** trainings, other agencies' jobs, RFPs. Then make the static pages editable one at a time.
 - **CI.** Workers Builds needs a build command (`cd cms && npm ci && npm run build`) and a deploy from `cms/`. The site checks should
