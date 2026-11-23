@@ -35,7 +35,7 @@ export function entryToMeeting(entry, locals) {
   const d = entry.data;
   const files = [];
   const add = (role, f) => { const url = fileUrl(f, locals); if (url) files.push({ role, name: fileName(f), url }); };
-  add('agenda', d.agenda);
+  add('materials', d.agenda); // legacy field: agendas are now uploaded as the first meeting material
   for (let n = 1; n <= 5; n++) add('materials', d[`material_${n}`]);
   add('minutes', d.minutes);
   return {
