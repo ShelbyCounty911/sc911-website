@@ -55,7 +55,7 @@ export function renderCard(m, lang) {
   const tile = tileParts(m.start, lang);
   const canceled = m.status === 'Canceled';
   const moved = m.status === 'Rescheduled' && m.firstStart && chicagoDayKey(m.firstStart) !== chicagoDayKey(m.start);
-  const agenda = m.files.find((f) => f.role === 'agenda');
+  // The agenda arrives with the other meeting materials, so the card has one "Meeting materials" list.
   const materials = m.files.filter((f) => f.role === 'materials');
 
   const online = m.onlineUrl && !canceled
@@ -84,7 +84,6 @@ export function renderCard(m, lang) {
     + `<section><p class="card-label">${esc(t.attendOnline)}</p><h3>${esc(t.onlineTitle)}</h3>${online}</section>`
     + `</div>`
     + `<div class="documents-strip">`
-    + `<div><h3>${esc(t.agenda)}</h3><p>${agenda ? fileLink(agenda, t.agenda, lang) : esc(t.notPosted)}</p></div>`
     + `<div><h3>${esc(t.materials)}</h3>${materials.length
       ? `<ul>${materials.map((f) => `<li>${fileLink(f, fileLabel(f.name), lang)}</li>`).join('')}</ul>`
       : `<p>${esc(t.notPostedPlural)}</p>`}</div>`
@@ -112,7 +111,7 @@ export function renderUpcoming(upcoming, lang) {
 export function renderRecord(m, lang) {
   const t = T[lang];
   const minutes = m.files.find((f) => f.role === 'minutes');
-  const agenda = m.files.find((f) => f.role === 'agenda');
+  const materials = m.status === 'Canceled' ? [] : m.files.filter((f) => f.role === 'materials');
   // Executive Committee minutes are not posted in this collection, so only Board meetings show "pending".
   const status = m.status === 'Canceled' ? t.recordStatus.canceled
     : minutes ? t.recordStatus.approved
@@ -120,7 +119,7 @@ export function renderRecord(m, lang) {
     : t.recordStatus.pending;
   const links = [
     minutes ? `<a href="${esc(minutes.url)}">${esc(t.minutesLink)}</a>` : '',
-    agenda && m.status !== 'Canceled' ? `<a href="${esc(agenda.url)}">${esc(t.agendaLink)}</a>` : '',
+    ...materials.map((f) => `<a href="${esc(f.url)}">${esc(fileLabel(f.name))} ${esc(t.pdf)}</a>`),
     m.recordingUrl ? `<a class="video-link" href="${esc(m.recordingUrl)}"><span aria-hidden="true">▷ </span>${esc(t.watch)}</a>` : '',
   ].join('');
   return `<article class="meeting-record" id="meeting-${m.itemId}"><div>`

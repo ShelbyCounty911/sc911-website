@@ -29,7 +29,7 @@ function meetingItems(entries, locals, origin, now = Date.now()) {
       const upcoming = Date.parse(m.end) > now;
       const where = m.locationName || 'District office';
       const files = m.files.map((f) =>
-        link(abs(origin, f.url), f.role === 'agenda' ? 'Agenda (PDF)' : f.role === 'minutes' ? 'Minutes (PDF)' : `${f.name} (PDF)`),
+        link(abs(origin, f.url), f.role === 'minutes' ? 'Minutes (PDF)' : `${f.name} (PDF)`),
       );
       if (m.recordingUrl) files.push(link(m.recordingUrl, 'Recording'));
       if (m.onlineUrl && upcoming && m.status !== 'Canceled') files.push(link(m.onlineUrl, 'Join online'));
@@ -125,7 +125,7 @@ function rfpItems(entries, locals, origin) {
 // ---------- feeds ----------
 
 export const FEEDS = {
-  meetings: { collections: ['meetings'], title: 'Meetings', page: '/meetings/', description: 'Board of Directors and Executive Committee meetings: notices, agendas and minutes.' },
+  meetings: { collections: ['meetings'], title: 'Meetings', page: '/meetings/', description: 'Board of Directors and Executive Committee meetings: notices, meeting materials and minutes.' },
   trainings: { collections: ['trainings'], title: 'Training and conferences', page: '/training/', description: 'Upcoming training and conferences for emergency communications professionals.' },
   jobs: { collections: ['psap_jobs'], title: 'Jobs at 9-1-1 centers', page: '/careers/', description: "Telecommunicator jobs posted by the agencies that run Shelby County's 9-1-1 centers. These are not District jobs." },
   rfps: { collections: ['rfps'], title: 'RFPs', page: '/rfps/', description: 'District requests for proposals, addenda and awards.' },

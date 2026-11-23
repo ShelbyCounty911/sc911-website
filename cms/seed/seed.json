@@ -89,33 +89,28 @@
           "type": "url"
         },
         {
-          "slug": "agenda",
-          "label": "Agenda (PDF)",
-          "type": "file"
-        },
-        {
           "slug": "material_1",
-          "label": "Supporting material 1 (PDF)",
+          "label": "Meeting material 1 (PDF): the agenda goes here",
           "type": "file"
         },
         {
           "slug": "material_2",
-          "label": "Supporting material 2 (PDF)",
+          "label": "Meeting material 2 (PDF)",
           "type": "file"
         },
         {
           "slug": "material_3",
-          "label": "Supporting material 3 (PDF)",
+          "label": "Meeting material 3 (PDF)",
           "type": "file"
         },
         {
           "slug": "material_4",
-          "label": "Supporting material 4 (PDF)",
+          "label": "Meeting material 4 (PDF)",
           "type": "file"
         },
         {
           "slug": "material_5",
-          "label": "Supporting material 5 (PDF)",
+          "label": "Meeting material 5 (PDF)",
           "type": "file"
         },
         {
@@ -461,8 +456,8 @@
         "data": {
           "title": "Executive Committee 2026-11-23",
           "body": "Executive Committee",
-          "start": "2026-11-23T10:00:00Z",
-          "end": "2026-11-23T11:00:00Z",
+          "start": "2026-11-23T11:00:00Z",
+          "end": "2026-11-23T12:00:00Z",
           "meeting_status": "Scheduled"
         }
       },
