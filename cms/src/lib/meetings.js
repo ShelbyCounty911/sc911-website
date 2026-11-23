@@ -49,6 +49,8 @@ export function entryToMeeting(entry, locals) {
     locationName: d.location_name || null,
     locationAddress: d.location_address ?? null,
     onlineUrl: d.online_url || null,
+    onlineDetails: d.online_details || null,
+    materialsUrl: d.materials_url || null,
     recordingUrl: d.recording_url || null,
     noteEn: d.note_en || null,
     noteEs: d.note_es || null,

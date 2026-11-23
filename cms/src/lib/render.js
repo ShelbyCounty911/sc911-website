@@ -60,7 +60,13 @@ export function renderCard(m, lang) {
 
   const online = m.onlineUrl && !canceled
     ? `<p>${esc(t.onlineReady)}</p><a class="button secondary" href="${esc(m.onlineUrl)}">${esc(t.onlineButton)}</a>`
+      + (m.onlineDetails ? `<p class="online-details">${escLines(m.onlineDetails)}</p>` : '')
     : `<p>${esc(t.onlinePending)}</p><span class="awaiting">${esc(t.onlinePendingTag)}</span>`;
+  // A materials folder link (Dropbox) comes first, then any uploaded PDFs.
+  const materialLinks = [
+    m.materialsUrl ? `<li><a href="${esc(m.materialsUrl)}">${esc(t.materialsFolder)}</a></li>` : '',
+    ...materials.map((f) => `<li>${fileLink(f, fileLabel(f.name), lang)}</li>`),
+  ].join('');
 
   const locationName = m.locationName || t.defaultLocationName;
   const locationAddress = m.locationAddress ?? (m.locationName ? '' : t.defaultLocationAddress);
@@ -84,8 +90,8 @@ export function renderCard(m, lang) {
     + `<section><p class="card-label">${esc(t.attendOnline)}</p><h3>${esc(t.onlineTitle)}</h3>${online}</section>`
     + `</div>`
     + `<div class="documents-strip">`
-    + `<div><h3>${esc(t.materials)}</h3>${materials.length
-      ? `<ul>${materials.map((f) => `<li>${fileLink(f, fileLabel(f.name), lang)}</li>`).join('')}</ul>`
+    + `<div><h3>${esc(t.materials)}</h3>${materialLinks
+      ? `<ul>${materialLinks}</ul>`
       : `<p>${esc(t.notPostedPlural)}</p>`}</div>`
     + `</div>`
     + `<div class="card-bottom">${bottom}</div>`
@@ -119,6 +125,7 @@ export function renderRecord(m, lang) {
     : t.recordStatus.pending;
   const links = [
     minutes ? `<a href="${esc(minutes.url)}">${esc(t.minutesLink)}</a>` : '',
+    m.materialsUrl && m.status !== 'Canceled' ? `<a href="${esc(m.materialsUrl)}">${esc(t.materialsFolder)}</a>` : '',
     ...materials.map((f) => `<a href="${esc(f.url)}">${esc(fileLabel(f.name))} ${esc(t.pdf)}</a>`),
     m.recordingUrl ? `<a class="video-link" href="${esc(m.recordingUrl)}"><span aria-hidden="true">▷ </span>${esc(t.watch)}</a>` : '',
   ].join('');

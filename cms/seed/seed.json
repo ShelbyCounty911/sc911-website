@@ -84,8 +84,18 @@
           "type": "url"
         },
         {
+          "slug": "online_details",
+          "label": "Online meeting ID and passcode",
+          "type": "text"
+        },
+        {
           "slug": "recording_url",
           "label": "Recording link (https)",
+          "type": "url"
+        },
+        {
+          "slug": "materials_url",
+          "label": "Meeting materials link (https), for example the Dropbox folder",
           "type": "url"
         },
         {

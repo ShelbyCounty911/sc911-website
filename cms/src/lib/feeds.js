@@ -31,6 +31,7 @@ function meetingItems(entries, locals, origin, now = Date.now()) {
       const files = m.files.map((f) =>
         link(abs(origin, f.url), f.role === 'minutes' ? 'Minutes (PDF)' : `${f.name} (PDF)`),
       );
+      if (m.materialsUrl && m.status !== 'Canceled') files.unshift(link(m.materialsUrl, 'Meeting materials'));
       if (m.recordingUrl) files.push(link(m.recordingUrl, 'Recording'));
       if (m.onlineUrl && upcoming && m.status !== 'Canceled') files.push(link(m.onlineUrl, 'Join online'));
       let html = `<p>${esc(formatDate(m.start, 'en'))}, ${esc(formatTimeRange(m.start, m.end, 'en'))} Central time. ${esc(where)}.</p>`;
