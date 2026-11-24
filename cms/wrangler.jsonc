@@ -60,8 +60,7 @@
 				{
 					"binding": "DB",
 					"database_name": "sc911-cms",
-					// Replace with the ID of the D1 database "sc911-cms" once it is created.
-					"database_id": "00000000-0000-0000-0000-000000000000",
+					"database_id": "7564a4db-322a-4e48-9f05-53c82ab0e721",
 				},
 			],
 			"r2_buckets": [
