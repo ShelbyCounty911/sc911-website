@@ -44,7 +44,24 @@ approved page content in this repository.
 
 1. Edit `site/pages/*.html` (both languages), `site/shared/*`, or `public/*.css`.
 2. `npm run build` regenerates `public/*.html`. Commit both the source and the generated files.
-3. `npm run check`, `node scripts/build-site.mjs --check` and `node scripts/check-cleanup.mjs` must pass. CI runs the same.
+3. `npm run check`, `node scripts/build-site.mjs --check`, `node scripts/check-cleanup.mjs` and
+   `node scripts/check-emdash-indexing.mjs` must pass. CI runs the same.
+
+## Test site and production builds
+
+One build setting decides which site a build is for (`cms/scripts/site-env.mjs`): Workers Builds for the production
+Worker `sc911-cms` sets the build variable `CLOUDFLARE_ENV=production`. That selects the `production` environment in
+`cms/wrangler.jsonc` (its own D1 database and R2 bucket) and builds the indexable site:
+
+| | Test site (`sc911-cms-spike`) | Production (`sc911-cms`) |
+|---|---|---|
+| Search engines | `noindex` meta and header, `robots.txt` disallows all | Indexed on `shelbycounty911.org` only; its `workers.dev` address stays `noindex` |
+| Canonical and `hreflang` links | none | `https://shelbycounty911.org/…` |
+| `sitemap.xml` | none | every page, EN and ES |
+| Footer | "· Review site" label | no label |
+
+`scripts/check-emdash-indexing.mjs` builds both and fails if either is wrong. The `shelbycounty911.org/*` route is not in
+`wrangler.jsonc`; it is added by hand at cutover (launch runbook).
 
 The EmDash site reads the same `site/` files at build time (`cms/scripts/build-static.mjs`), serves them at short URLs
 (`/meetings/`, Spanish under `/es/`, mapped in `cms/redirects/url-map.json`), and fills in the collection-driven parts at
@@ -87,7 +104,7 @@ stopping the dev server can leave `workerd` processes that lock that folder; end
   project owner's approval, and record the change there. District naming follows
   [`docs/DISTRICT-NAMING.md`](docs/DISTRICT-NAMING.md): "Shelby County, TN Emergency Communications District".
 - **No production DNS or route changes** without the project owner. The cutover is a Workers route, done during launch.
-- **Keep the test site non-indexed** (`noindex`) until launch.
+- **Keep the test site non-indexed** (`noindex`); only the production build is indexable (see above).
 - **Never commit** WordPress backups, SQL dumps, credentials, tokens or restricted records. This repository is public.
 - **Accessibility:** WCAG 2.1 AA for pages; uploaded PDFs should be tagged.
 

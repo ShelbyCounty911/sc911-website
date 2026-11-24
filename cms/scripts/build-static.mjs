@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { PRODUCTION, ORIGIN, HOST } from './site-env.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
@@ -40,6 +41,11 @@ function rewriteUrl(value, page) {
 }
 
 const pages = {};
+// Page base name -> { en: url, es: url }, for hreflang links.
+const pairs = {};
+for (const name of fs.readdirSync(path.join(site, 'pages')).filter((n) => n.endsWith('.html') && !n.endsWith('404.html'))) {
+  (pairs[name.replace(/^es-/, '')] ??= {})[name.startsWith('es-') ? 'es' : 'en'] = urlFor[name];
+}
 for (const name of fs.readdirSync(path.join(site, 'pages')).filter((n) => n.endsWith('.html'))) {
   const es = name.startsWith('es-');
   const prefix = es ? 'es-' : '';
@@ -59,6 +65,22 @@ for (const name of fs.readdirSync(path.join(site, 'pages')).filter((n) => n.ends
   html = html.replace(/<div class="review">[^<]*<\/div>/, '');
   // Review-only title endings become the District's name, like the pages that already use it.
   html = html.replace(/<title>([^<]*?) \| SC911 (?:Design|Content) Review<\/title>/, `<title>$1 | ${SITE_NAME}</title>`);
+  if (PRODUCTION) {
+    // Production is indexed: drop the review-site robots meta and the footer's review label, and name the
+    // canonical address and the other-language page. The test site keeps all of these (and noindex).
+    html = html.replace(/<meta name="robots"[^>]*>/i, '');
+    html = html.replace(/ · (?:Review site|Sitio de revisión)<\/span>/, '</span>');
+    const pair = pairs[base];
+    if (pair && base !== '404.html') {
+      const links = [`<link rel="canonical" href="${ORIGIN}${urlFor[name]}">`];
+      if (pair.en && pair.es) {
+        links.push(`<link rel="alternate" hreflang="en" href="${ORIGIN}${pair.en}">`);
+        links.push(`<link rel="alternate" hreflang="es" href="${ORIGIN}${pair.es}">`);
+        links.push(`<link rel="alternate" hreflang="x-default" href="${ORIGIN}${pair.en}">`);
+      }
+      html = html.replace('</head>', links.join('') + '</head>');
+    }
+  }
   html = html.replace(/\b(href|src)="([^"]*)"/g, (_, attr, v) => `${attr}="${rewriteUrl(v, name)}"`);
   const key = base === '404.html' ? (es ? 'es-404' : '404') : urlFor[name];
   if (!key) throw new Error(`${name} has no URL in redirects/url-map.json`);
@@ -73,4 +95,18 @@ for (const name of fs.readdirSync(path.join(site, 'pages')).filter((n) => n.ends
 
 fs.mkdirSync(path.join(root, 'src/generated'), { recursive: true });
 fs.writeFileSync(path.join(root, 'src/generated/static-pages.json'), JSON.stringify(pages));
+// Read by the page routes: X-Robots-Tag noindex everywhere except production on the public hostname.
+fs.writeFileSync(path.join(root, 'src/generated/site.json'), JSON.stringify({ production: PRODUCTION, host: HOST }));
+
+// sitemap.xml, production only. public/ is filled by sync-assets.mjs, which runs before this script.
+const sitemap = path.join(root, 'public/sitemap.xml');
+if (PRODUCTION) {
+  const urls = Object.keys(pages).filter((k) => k.startsWith('/')).sort();
+  const xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...urls.map((u) => `  <url><loc>${ORIGIN}${u}</loc></url>`), '</urlset>', ''];
+  fs.writeFileSync(sitemap, xml.join('\n'));
+  console.log(`production build: sitemap.xml with ${urls.length} pages`);
+} else {
+  fs.rmSync(sitemap, { force: true });
+}
 console.log(`${Object.keys(pages).length} pages written to src/generated/static-pages.json`);
