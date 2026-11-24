@@ -27,3 +27,6 @@ jobs:
 
       - name: Shared layout and redirect checks
         run: node scripts/check-cleanup.mjs
+
+      - name: EmDash test site noindex, production indexable
+        run: node scripts/check-emdash-indexing.mjs

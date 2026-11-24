@@ -46,4 +46,38 @@
 			"* * * * *"
 		],
 	},
+	// Production: the Worker sc911-cms, with its own database and file storage (runbook decision D1).
+	// Workers Builds for sc911-cms sets the build variable CLOUDFLARE_ENV=production, which selects this
+	// environment and builds the indexable site (cms/scripts/site-env.mjs). The test site above is unchanged.
+	// workers_dev stays on for admin setup before cutover; Access must protect it before the first deploy.
+	// No "routes" here: the shelbycounty911.org/* route is added by hand at cutover (docs/LAUNCH-RUNBOOK.md).
+	"env": {
+		"production": {
+			"name": "sc911-cms",
+			"workers_dev": true,
+			"preview_urls": false,
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "sc911-cms",
+					// Replace with the ID of the D1 database "sc911-cms" once it is created.
+					"database_id": "00000000-0000-0000-0000-000000000000",
+				},
+			],
+			"r2_buckets": [
+				{
+					"binding": "MEDIA",
+					"bucket_name": "sc911-cms-media",
+				},
+			],
+			"durable_objects": {
+				"bindings": [
+					{
+						"name": "EMDASH_ROOMS",
+						"class_name": "EmDashRoom"
+					}
+				],
+			},
+		},
+	},
 }
