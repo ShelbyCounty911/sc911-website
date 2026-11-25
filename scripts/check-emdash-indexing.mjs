@@ -48,6 +48,7 @@ const LABEL = / · (?:Review site|Sitio de revisión)</;
   for (const [key, p] of Object.entries(b.pages)) {
     check(!NOINDEX.test(p.html), `${label}: ${key} still has a noindex robots meta`);
     check(!LABEL.test(p.html), `${label}: ${key} still shows the review-site footer label`);
+    check(p.html.includes('<meta name="format-detection" content="telephone=no">'), `${label}: ${key} lets iPhone Safari turn numbers into phone links`);
     if (key.startsWith('/')) {
       check(p.html.includes(`<link rel="canonical" href="https://shelbycounty911.org${key}">`), `${label}: ${key} has no canonical link`);
       check(b.sitemap?.includes(`<loc>https://shelbycounty911.org${key}</loc>`), `${label}: ${key} missing from sitemap.xml`);

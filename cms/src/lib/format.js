@@ -9,11 +9,19 @@ export function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, (c) => ESC[c]);
 }
 
-/** Escape multi-line text, turning newlines into <br>. */
+/** Link US phone numbers in already-escaped text, e.g. (901) 380-3908 → tel:+19013803908. */
+export function linkPhones(html) {
+  return html.replace(
+    /(?<![\w-])(?:\+?1[ .-]?)?\(?([2-9]\d{2})\)?[ .-]?(\d{3})[ .-](\d{4})(?![\w-])/g,
+    (m, a, b, c) => `<a href="tel:+1${a}${b}${c}">${m}</a>`,
+  );
+}
+
+/** Escape multi-line text, turning newlines into <br> and phone numbers into tel: links. */
 export function escLines(value) {
   return String(value ?? '')
     .split(/\r?\n/)
-    .map((line) => esc(line.trim()))
+    .map((line) => linkPhones(esc(line.trim())))
     .filter(Boolean)
     .join('<br>');
 }
