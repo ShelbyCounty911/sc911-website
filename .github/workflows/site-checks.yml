@@ -30,3 +30,6 @@ jobs:
 
       - name: EmDash test site noindex, production indexable
         run: node scripts/check-emdash-indexing.mjs
+
+      - name: Add-recording page logic
+        run: node scripts/check-recordings.mjs

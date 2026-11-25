@@ -1,0 +1,178 @@
+---
+// Staff page: paste a meeting video's Dropbox link; the site copies it to Cloudflare Stream, starts English
+// captions, and adds the watch link to the meeting. Editors and Admins only (EmDash role 40+).
+// How-to: docs/ADD-RECORDING.md.
+const user = (Astro.locals as { user?: { role?: number; name?: string; email?: string } }).user;
+const allowed = Boolean(user && (user.role ?? 0) >= 40);
+Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+Astro.response.headers.set("Cache-Control", "no-store");
+if (!allowed) Astro.response.status = user ? 403 : 401;
+---
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<meta name="robots" content="noindex,nofollow" />
+	<title>Add a meeting recording | SC911 staff</title>
+	<link rel="stylesheet" href="/style.css" />
+	<style>
+		.tool { max-width: 720px; padding-top: 40px; padding-bottom: 64px; }
+		.tool label { display: block; font-weight: 650; margin: 22px 0 6px; }
+		.tool input[type="url"], .tool select { width: 100%; font: inherit; padding: 10px 12px; border: 1px solid var(--line); background: var(--surface); color: inherit; }
+		.tool .hint { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+		.tool .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; }
+		.tool .check input { margin-top: 5px; }
+		.tool button { margin-top: 26px; font: inherit; font-weight: 650; padding: 12px 22px; border: 0; background: var(--teal); color: #fff; cursor: pointer; }
+		.tool button[disabled] { opacity: .55; cursor: default; }
+		.tool .msg { margin-top: 24px; padding: 16px 18px; border-left: 4px solid var(--teal); background: var(--soft); }
+		.tool .msg.error { border-color: #b82016; }
+		.tool .msg.warn { border-color: #c88b12; }
+		.tool progress { width: 100%; height: 12px; margin-top: 10px; }
+	</style>
+</head>
+<body>
+	<a class="skip" href="#main">Skip to content</a>
+	<main id="main"><div class="wrap tool">
+		<p class="eyebrow">Staff tool</p>
+		<h1>Add a meeting recording</h1>
+		{allowed ? (
+			<form id="rec-form" novalidate>
+				<p class="lead">Paste the Dropbox link to the meeting video. The site copies it to Cloudflare Stream, starts English captions, and adds "Watch recording" to the meeting on Meeting records.</p>
+
+				<label for="rec-url">Dropbox link to the video (.mp4)</label>
+				<input id="rec-url" name="url" type="url" required autocomplete="off" placeholder="https://www.dropbox.com/scl/fi/…/2026-11-23-Executive-Committee-Meeting.mp4?…" aria-describedby="rec-url-hint" />
+				<p class="hint" id="rec-url-hint">Use the link to the video file itself, not its folder. Raymond's file names include the date and committee, so the meeting is picked for you.</p>
+
+				<label for="rec-meeting">Meeting</label>
+				<select id="rec-meeting" name="meeting" required aria-describedby="rec-meeting-hint"><option value="">Loading meetings…</option></select>
+				<p class="hint" id="rec-meeting-hint">Meetings from the last six months. Check the date and committee before you start.</p>
+
+				<div id="rec-replace" hidden>
+					<p class="msg warn">This meeting already has a recording. <a id="rec-current" href="#">Current recording</a></p>
+					<label class="check"><input type="checkbox" id="rec-replace-ok" /> Replace it with this video</label>
+				</div>
+
+				<button type="submit" id="rec-go">Add recording</button>
+				<div id="rec-status" role="status" aria-live="polite"></div>
+			</form>
+		) : (
+			<div class="msg error">
+				{user
+					? <p>Your account can't add recordings. Ask the site Admin to make you an Editor.</p>
+					: <p>Sign in first: open the <a href="/_emdash/admin">site admin</a>, then come back to this page.</p>}
+			</div>
+		)}
+		<p style="margin-top:32px"><a href="/_emdash/admin/content/meetings">Back to Meetings in the admin</a></p>
+	</div></main>
+
+	<script>
+		import { normalizeDropboxUrl, guessFromFilename, matchMeeting, recentMeetings, meetingDay } from "../../../lib/recordings.js";
+
+		const form = document.getElementById("rec-form") as HTMLFormElement | null;
+		if (form) {
+			const $ = (id: string): any => document.getElementById(id);
+			const urlInput = $("rec-url") as HTMLInputElement;
+			const select = $("rec-meeting") as HTMLSelectElement;
+			const replaceBox = $("rec-replace");
+			const replaceOk = $("rec-replace-ok") as HTMLInputElement;
+			const go = $("rec-go") as HTMLButtonElement;
+			const status = $("rec-status");
+			const H = { "X-EmDash-Request": "1", "Content-Type": "application/json" };
+			let meetings: any[] = [];
+
+			const show = (html: string, kind = "") => { status.innerHTML = `<div class="msg ${kind}">${html}</div>`; };
+			const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+			const label = (m: any, flag = true) => {
+				const [y, mo, d] = meetingDay(m)!.split("-").map(Number);
+				const date = new Date(Date.UTC(y, mo - 1, d)).toLocaleDateString("en-US", { timeZone: "UTC", month: "long", day: "numeric", year: "numeric" });
+				return `${date} · ${m.data.body}${flag && m.data.recording_url ? " (has a recording)" : ""}`;
+			};
+			const selected = () => meetings.find((m) => m.id === select.value);
+			const syncReplace = () => {
+				const m = selected();
+				replaceBox.hidden = !m?.data?.recording_url;
+				if (m?.data?.recording_url) ($("rec-current") as HTMLAnchorElement).href = m.data.recording_url;
+				replaceOk.checked = false;
+			};
+
+			async function api(body: object): Promise<any> {
+				const res = await fetch("/tools/add-recording/api", { method: "POST", headers: H, body: JSON.stringify(body) });
+				const data: any = await res.json().catch(() => ({}));
+				if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+				return data;
+			}
+
+			async function loadMeetings() {
+				// EmDash returns at most 100 entries a page; follow nextCursor for the rest.
+				const items: any[] = [];
+				let cursor = "";
+				do {
+					const res = await fetch(`/_emdash/api/content/meetings?status=all&limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`, { headers: H });
+					if (!res.ok) throw new Error("Couldn't load meetings. Reload the page; if it keeps failing, sign in to the admin again.");
+					const page = ((await res.json()) as any).data;
+					items.push(...page.items.filter((i: any) => i.status === "published"));
+					cursor = page.nextCursor ?? "";
+				} while (cursor && items.length < 5000);
+				meetings = recentMeetings(items);
+				select.innerHTML = `<option value="">Choose the meeting…</option>` + meetings.map((m) => `<option value="${esc(m.id)}">${esc(label(m))}</option>`).join("");
+			}
+
+			urlInput.addEventListener("input", () => {
+				try {
+					const { filename } = normalizeDropboxUrl(urlInput.value);
+					const hit = matchMeeting(meetings, guessFromFilename(filename));
+					if (hit) { select.value = hit.id; syncReplace(); }
+				} catch { /* shown on submit */ }
+			});
+			select.addEventListener("change", syncReplace);
+
+			const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+			async function setRecording(id: string, url: string) {
+				const cur: any = await fetch(`/_emdash/api/content/meetings/${id}`, { headers: H }).then((r) => r.json());
+				const item = cur.data?.item ?? cur.data;
+				const put = await fetch(`/_emdash/api/content/meetings/${id}`, { method: "PUT", headers: H, body: JSON.stringify({ data: { ...item.data, recording_url: url } }) });
+				if (!put.ok) throw new Error(`Couldn't save the meeting (${put.status}). Your account may not be allowed to publish.`);
+				const pub = await fetch(`/_emdash/api/content/meetings/${id}/publish`, { method: "POST", headers: H });
+				if (!pub.ok) throw new Error(`Saved, but couldn't publish the meeting (${pub.status}). Open it in the admin and publish.`);
+			}
+
+			form.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				try { normalizeDropboxUrl(urlInput.value); } catch (err) { show(esc((err as Error).message), "error"); urlInput.focus(); return; }
+				const meeting = selected();
+				if (!meeting) { show("Choose the meeting this video belongs to.", "error"); select.focus(); return; }
+				if (meeting.data.recording_url && !replaceOk.checked) { show("This meeting already has a recording. Tick “Replace it with this video” to replace it.", "error"); replaceOk.focus(); return; }
+
+				go.disabled = true; urlInput.readOnly = true; select.disabled = true;
+				try {
+					show("Sending the video to Cloudflare Stream…");
+					const { uid, reused } = await api({ action: "start", url: urlInput.value });
+					let st: any;
+					for (let i = 0; ; i++) {
+						st = await api({ action: "status", uid });
+						if (st.failed) throw new Error(`Stream couldn't process the video: ${st.error}`);
+						if (st.ready) break;
+						const pct = st.percent ?? 0;
+						show(`${reused && i === 0 ? "This video was already sent to Stream. " : ""}Stream is processing the video. Keep this page open; this can take several minutes for a long meeting.<br><progress max="100" value="${pct}" aria-label="Processing">${pct}%</progress>`);
+						await sleep(10000);
+					}
+					if (!st.watchUrl) throw new Error("Stream finished but returned no watch link. Ask the site Admin.");
+					show("Adding the recording to the meeting…");
+					await setRecording(meeting.id, st.watchUrl);
+					meeting.data.recording_url = st.watchUrl;
+					const cap = st.captions === "ready" ? "English captions are on." : "English captions are being generated and will appear on the video in a few minutes.";
+					show(`Done. “Watch recording” now shows for ${esc(label(meeting, false))} on <a href="/records/">Meeting records</a>. <a href="${esc(st.watchUrl)}">Open the recording</a>. ${cap}`);
+				} catch (err) {
+					show(`${esc((err as Error).message)} Nothing on the public site changed. You can paste the same link again; it won't upload a second copy.`, "error");
+				} finally {
+					go.disabled = false; urlInput.readOnly = false; select.disabled = false;
+				}
+			});
+
+			loadMeetings().catch((err) => show(esc(err.message), "error"));
+		}
+	</script>
+</body>
+</html>
