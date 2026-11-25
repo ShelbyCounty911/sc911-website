@@ -104,7 +104,6 @@ function rfpItems(entries, locals, origin) {
       r.due && `Proposals due ${time(r.due)} Central time`,
     ].filter(Boolean);
     let html = `<p>${esc(dates.join(' · '))}</p>`;
-    if (d.summary_en) html += `<p>${escLines(d.summary_en)}</p>`;
     if (d.contact) html += `<p>Contact: ${escLines(d.contact)}</p>`;
     const docs = [];
     const add = (f, label) => { const u = fileUrl(f, locals); if (u) docs.push(link(abs(origin, u), `${label} (PDF)`)); };

@@ -387,16 +387,6 @@
           "required": true
         },
         {
-          "slug": "summary_en",
-          "label": "Summary (English)",
-          "type": "text"
-        },
-        {
-          "slug": "summary_es",
-          "label": "Summary (Spanish)",
-          "type": "text"
-        },
-        {
           "slug": "contact",
           "label": "Procurement contact (name, email)",
           "type": "text"
