@@ -84,6 +84,9 @@ for (const name of fs.readdirSync(path.join(site, 'pages')).filter((n) => n.ends
   html = html.replace(/\b(href|src)="([^"]*)"/g, (_, attr, v) => `${attr}="${rewriteUrl(v, name)}"`);
   const key = base === '404.html' ? (es ? 'es-404' : '404') : urlFor[name];
   if (!key) throw new Error(`${name} has no URL in redirects/url-map.json`);
+  // iPhone Safari turns number runs such as RFP 2026-0801 into phone links. Every real phone number on the pages
+  // is already a tel: link, and staff-entered numbers get one from linkPhones() in src/lib/format.js.
+  html = html.replace('</head>', '<meta name="format-detection" content="telephone=no"></head>');
   // RSS autodiscovery (feeds are English; see src/lib/feeds.js): the page's own feed, then the site feed.
   const feeds = [FEED_FOR[base], ['/feed/', 'Updates']].filter(Boolean);
   html = html.replace(

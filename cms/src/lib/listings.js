@@ -252,7 +252,6 @@ function rfpCard(r, lang, locals, open) {
   const dt = (v) => `${formatDate(v, lang)} ${l.at} ${timeOf(v, lang)}`;
   const dates = [r.issued ? l.issued(formatDate(r.issued, lang)) : null, r.questions && open ? l.questionsDue(dt(r.questions)) : null, r.due ? l.due(dt(r.due)) : null].filter(Boolean);
   const title = pick(d.title, d.title_es, lang);
-  const summary = pick(d.summary_en, d.summary_es, lang);
   const docs = [];
   const add = (f, label) => { const url = fileUrl(f, locals); if (url) docs.push(`<a href="${esc(url)}">${esc(label)} ${esc(l.pdf)}</a>`); };
   add(d.solicitation, l.solicitation);
@@ -261,7 +260,6 @@ function rfpCard(r, lang, locals, open) {
   let html = `<article class="job-card" aria-labelledby="${id}"><p class="job-agency"><span>${esc(d.number || '')}</span><span>${esc(status)}</span></p>`;
   html += `<h3 id="${id}"${lang === 'es' && !d.title_es ? ' lang="en"' : ''}>${esc(title)}</h3>`;
   if (dates.length) html += `<p class="job-terms">${dates.map(esc).join(' · ')}</p>`;
-  if (summary) html += `<p>${escLines(summary)}</p>`;
   if (d.contact) html += `<p><strong>${l.contact}:</strong> ${escLines(d.contact)}</p>`;
   if (docs.length) html += `<ul class="rfp-docs">${docs.map((a) => `<li>${a}</li>`).join('')}</ul>`;
   return html + `</article>`;
